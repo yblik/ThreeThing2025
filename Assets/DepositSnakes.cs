@@ -1,37 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DepositSnakes : MonoBehaviour
 {
-    public Transform player;   
-    public float triggerDistance = 3; 
+    [Header("References")]
+    public Transform player;
+    public PlayerCatch PC;       // Reference to PlayerCatch script
+    public Bank Natwest;         // Reference to your money system
 
+    [Header("Settings")]
+    public float triggerDistance = 3f;
     public int depositedSnakes = 0;
-    public PlayerCatch PC;
-    public Bank Natwest;
-
+    public int maxDeposits = 20;
 
     void Update()
     {
+        if (player == null || PC == null || Natwest == null)
+        {
+            Debug.LogWarning("DepositSnakes: Missing required reference(s).");
+            return;
+        }
+
         float distance = Vector3.Distance(player.position, transform.position);
 
-        if (distance <= triggerDistance && depositedSnakes < 20)
+        // Only allow deposit if player is close and under limit
+        if (distance <= triggerDistance && depositedSnakes < maxDeposits)
         {
-            print("can deposit rn");
-            if (Input.GetKeyDown(KeyCode.E) && PC.StroredCollectibles > 0)
+            // Visual or sound cue could go here ("Press E to deposit snakes")
+
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                if (PC.StroredCollectibles > 0)
+                if (PC.StoredCollectibles > 0)
                 {
-                    Debug.Log("Deposited a collectible!");
-                    depositedSnakes += PC.StroredCollectibles;
-                    Natwest.WorkdaysWorking(PC.StroredCollectibles); //each snake is worth 10 dinero
-                    PC.StroredCollectibles = 0;
+                    Debug.Log($"Deposited {PC.StoredCollectibles} snake(s)!");
+
+                    depositedSnakes += PC.StoredCollectibles;
+
+                    // Call your bank to add the earnings
+                    Natwest.WorkdaysWorking(PC.StoredCollectibles);
+
+                    // Reset player’s inventory
+                    PC.StoredCollectibles = 0;
+                }
+                else
+                {
+                    Debug.Log("No snakes to deposit!");
                 }
             }
         }
     }
-    //then code to display depositied snakes on screen
-
-
 }

@@ -1,46 +1,64 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerCatch : MonoBehaviour
 {
-    public int StroredCollectibles = 0;
+    public int StoredCollectibles = 0;
     public GameObject currentTarget;
     public bool canCatch = false;
 
     public Text Display;
-
-    public int Max = 5; //to be upgraded later
+    public int Max = 5; // storage capacity (can be upgraded later)
 
     private void Update()
     {
-        Display.text = "Snakes:" + StroredCollectibles.ToString(); //spacing causes error with text alignment
+        Display.text = "Snakes: " + StoredCollectibles.ToString();
 
-
-        if (Input.GetMouseButton(0) && canCatch)
+        if (Input.GetMouseButtonDown(0) && canCatch && currentTarget != null)
         {
-            Debug.Log("Caught a collectible!");
-            Destroy(currentTarget.gameObject);
-            StroredCollectibles += 1;
-            canCatch = false;
+            // Confirm the target can actually be caught
+            AIControllerScript ai = currentTarget.GetComponent<AIControllerScript>();
+            if (ai != null && ai.currentState != AIControllerScript.AIState.Hiding)
+            {
+                Debug.Log("Caught a snake!");
+                Destroy(currentTarget.gameObject);
+                StoredCollectibles += 1;
+                canCatch = false;
+                currentTarget = null;
+            }
+            else
+            {
+                Debug.Log("Can't catch — the snake is hiding!");
+            }
         }
     }
-    public void OnTriggerStay(Collider other)
+
+    private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Enemy") && StroredCollectibles <= Max)
+        if (!other.CompareTag("Enemy")) return;
+
+        // Make sure the snake isn't hiding
+        AIControllerScript ai = other.GetComponent<AIControllerScript>();
+        if (ai != null && ai.currentState == AIControllerScript.AIState.Hiding)
+        {
+            canCatch = false;
+            currentTarget = null;
+            return;
+        }
+
+        // Normal catching logic
+        if (StoredCollectibles < Max)
         {
             currentTarget = other.gameObject;
             canCatch = true;
-            Debug.Log(currentTarget);
         }
-        //else
-        //{
-        //               canCatch = false;
-        //    currentTarget = null;
-        //    print ("Too many collectibles to catch more!");
-        //}
+        else
+        {
+            canCatch = false;
+            currentTarget = null;
+        }
     }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Enemy"))
