@@ -1,9 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class AIControllerScript : MonoBehaviour
 {
-    public enum AIState { Aggro, Scared, Hiding }
+    public enum AIState { Patrol, Aggro, Scared, Hiding, Attack }
 
     [Header("References")]
     public Transform player;
@@ -11,153 +12,273 @@ public class AIControllerScript : MonoBehaviour
     private MeshRenderer[] renderers;
 
     [Header("AI Settings")]
-    public AIState currentState = AIState.Aggro;
+    public AIState currentState = AIState.Patrol;
     public float detectionRange = 15f;
-    public float fleeDistance = 10f;
+    public float attackRange = 3f;
+    public float stoppingDistance = 2f;
+    public float lungeForce = 4f;
     public float chaseSpeed = 3.5f;
     public float fleeSpeed = 5f;
+    public float patrolSpeed = 1.5f;
     public float playerSpeedThreshold = 3.0f;
+
+    [Header("Patrol")]
+    public Transform[] patrolPoints;
+    private int patrolIndex = 0;
+    public float patrolWaitTime = 2f;
+    private float patrolWaitTimer;
+
+    [Header("Safety / Unstuck")]
+    public float wallCheckDistance = 1f;
+    public float edgeCheckDistance = 1.2f;
+    public LayerMask groundMask;
+    public LayerMask wallMask;
+
+    // Hiding / Bush System
     public float hideDuration = 5f;
-    public float hideCooldownTime = 5f;
+    public float hideCooldown = 5f;
+    private float hideCooldownTimer;
+    private float hideTimer;
+    private BushSpot targetBush;
+
+
+    // attack / lunge
+    [Header("Attack Settings")]
+    public float attackCooldown = 1.2f;
+    private float attackCooldownTimer;
+    public float lungeDuration = 0.25f;
+    private float lungeTimer;
+    public float lungeDistance = 2f;
+    public float attackSpeedMultiplier = 6f;
+
 
     private Vector3 lastPlayerPos;
     private float playerSpeed;
 
-    // Bush system
-    private BushSpot targetBush;
-    private BushGroupManager targetGroup;
-    private float hideTimer;
-    private float hideCooldownTimer = 0f; // tracks cooldown after emerging
-
-    void Start()
+    private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         renderers = GetComponentsInChildren<MeshRenderer>();
 
         if (player == null)
-            player = GameObject.FindGameObjectWithTag("Player")?.transform;
+            player = GameObject.FindGameObjectWithTag("Player").transform;
 
         lastPlayerPos = player.position;
 
-        // Ensure the agent starts on a valid NavMesh
-        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            agent.Warp(hit.position);
-        }
-        else
-        {
-            Debug.LogError($"{name} could NOT find NavMesh at start!");
-        }
+        agent.stoppingDistance = stoppingDistance;
     }
 
-    void Update()
+    private void Update()
     {
-        if (!agent.isOnNavMesh)
-        {
-            Debug.LogError($"{name} is not on NavMesh!");
-            return;
-        }
+        if (!agent.isOnNavMesh) return;
+        if (attackCooldownTimer > 0)
+            attackCooldownTimer -= Time.deltaTime;
 
-        // Reduce hide cooldown timer every frame
-        if (hideCooldownTimer > 0f)
+        // Cooldown handling
+        if (hideCooldownTimer > 0)
             hideCooldownTimer -= Time.deltaTime;
 
-        // Calculate player movement speed
-        playerSpeed = ((player.position - lastPlayerPos).magnitude) / Time.deltaTime;
+        // Player speed
+        playerSpeed = (player.position - lastPlayerPos).magnitude / Time.deltaTime;
         lastPlayerPos = player.position;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        HandleEdgeAvoidance();
 
-        // Out of detection range: idle / no path
-        if (distanceToPlayer > detectionRange && currentState != AIState.Hiding)
-        {
-            agent.ResetPath();
-            return;
-        }
+        if (currentState != AIState.Hiding)
+            CheckStateTransitions();
 
-        // State transitions
-        if (currentState == AIState.Aggro && playerSpeed > playerSpeedThreshold)
-        {
-            currentState = AIState.Scared;
-        }
-        else if (currentState == AIState.Scared && playerSpeed < playerSpeedThreshold / 2f)
-        {
-            currentState = AIState.Aggro;
-        }
-
-        // Run behavior
+        // State machine
         switch (currentState)
         {
+            case AIState.Patrol:
+                Patrol();
+                break;
             case AIState.Aggro:
                 ChasePlayer();
                 break;
-
             case AIState.Scared:
                 TryHideInBush();
                 break;
-
             case AIState.Hiding:
                 HandleHiding();
                 break;
+            case AIState.Attack:
+                HandleAttack();
+                break;
         }
     }
+
+    // -----------------------------------------
+    // PATROL SYSTEM
+    // -----------------------------------------
+
+    void Patrol()
+    {
+        agent.speed = patrolSpeed;
+
+        if (patrolPoints.Length == 0)
+        {
+            RandomWanderPatrol();
+            return;
+        }
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            patrolWaitTimer -= Time.deltaTime;
+            if (patrolWaitTimer <= 0)
+                GoToNextPatrolPoint();
+        }
+    }
+
+    void GoToNextPatrolPoint()
+    {
+        agent.SetDestination(patrolPoints[patrolIndex].position);
+        patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
+        patrolWaitTimer = patrolWaitTime;
+    }
+
+    void RandomWanderPatrol()
+    {
+        if (agent.remainingDistance < 1f)
+        {
+            Vector3 randomDirection = Random.insideUnitSphere * 6f;
+            randomDirection += transform.position;
+
+            if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+                agent.SetDestination(hit.position);
+        }
+    }
+
+    // -----------------------------------------
+    // EDGE & WALL SAFETY
+    // -----------------------------------------
+
+    void HandleEdgeAvoidance()
+    {
+        Vector3 forward = transform.forward;
+
+        // WALL check
+        if (Physics.Raycast(transform.position + Vector3.up * 0.3f, forward, wallCheckDistance, wallMask))
+        {
+            agent.ResetPath();
+            transform.Rotate(0, Random.Range(-90f, 90f), 0);
+        }
+
+        // EDGE check
+        if (!Physics.Raycast(transform.position + forward * 0.3f + Vector3.up * 0.2f, Vector3.down, edgeCheckDistance, groundMask))
+        {
+            // Don't walk off cliffs
+            agent.ResetPath();
+            transform.Rotate(0, 180, 0);
+        }
+    }
+
+    // -----------------------------------------
+    // CHASE & ATTACK
+    // -----------------------------------------
 
     void ChasePlayer()
     {
         agent.speed = chaseSpeed;
-        if (agent.isOnNavMesh)
-            agent.SetDestination(player.position);
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance <= attackRange && attackCooldownTimer <= 0)
+        {
+            EnterAttackState();
+            return;
+        }
+
+
+        agent.SetDestination(player.position);
     }
+
+    void EnterAttackState()
+    {
+        currentState = AIState.Attack;
+        agent.isStopped = true;
+
+        lungeTimer = lungeDuration;
+        attackCooldownTimer = attackCooldown;
+    }
+
+
+    void HandleAttack()
+    {
+        // Reduce lunge time
+        lungeTimer -= Time.deltaTime;
+
+        if (lungeTimer > 0)
+        {
+            // Perform the lunge
+            Vector3 direction = (player.position - transform.position).normalized;
+            transform.position += direction * attackSpeedMultiplier * Time.deltaTime;
+            return;
+        }
+
+        // Lunge finished â†’ begin backoff routine
+        agent.isStopped = false;
+        StartCoroutine(BackOffRoutine());
+        currentState = AIState.Patrol;
+    }
+
+
+    private IEnumerator BackOffRoutine()
+    {
+        currentState = AIState.Scared;
+
+        // move backward a little
+        Vector3 away = (transform.position - player.position).normalized;
+        Vector3 target = transform.position + away * 4f;
+
+        if (NavMesh.SamplePosition(target, out NavMeshHit hit, 4f, NavMesh.AllAreas))
+            agent.SetDestination(hit.position);
+
+        // wait before allowed to attack again
+        yield return new WaitForSeconds(5f);
+
+        currentState = AIState.Patrol;  // or AIState.Aggro, your choice
+    }
+
+
+    // -----------------------------------------
+    // SCARED / HIDING
+    // -----------------------------------------
 
     void TryHideInBush()
     {
-        // Respect cooldown — can't hide again until timer runs out
-        if (hideCooldownTimer > 0f)
+        if (hideCooldownTimer > 0)
             return;
 
         agent.speed = fleeSpeed;
 
-        // If we already have a target bush, move to it
-        if (targetBush != null)
+        if (targetBush == null)
         {
-            if (agent.isOnNavMesh)
-                agent.SetDestination(targetBush.GetHidePosition());
+            (BushGroupManager group, BushSpot bush) = FindNearestBushSpot();
+            if (bush == null)
+            {
+                // fallback run-away
+                Vector3 dir = (transform.position - player.position).normalized;
+                Vector3 flee = transform.position + dir * 5f;
+                if (NavMesh.SamplePosition(flee, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+                    agent.SetDestination(hit.position);
+                return;
+            }
 
-            float dist = Vector3.Distance(transform.position, targetBush.transform.position);
-            if (dist < 0.8f)
-                EnterHideState();
-
-            return;
-        }
-
-        // Otherwise, find nearest available bush
-        (BushGroupManager group, BushSpot bush) = FindNearestBushSpot();
-
-        if (bush != null)
-        {
             targetBush = bush;
-            targetGroup = group;
             targetBush.isOccupied = true;
-
-            if (agent.isOnNavMesh)
-                agent.SetDestination(targetBush.GetHidePosition());
         }
-        else
-        {
-            // No bushes found — fallback to running away
-            Vector3 directionAway = (transform.position - player.position).normalized;
-            Vector3 fleeTarget = transform.position + directionAway * fleeDistance;
 
-            if (NavMesh.SamplePosition(fleeTarget, out NavMeshHit hit, fleeDistance, NavMesh.AllAreas))
-                agent.SetDestination(hit.position);
-        }
+        agent.SetDestination(targetBush.GetHidePosition());
+
+        if (Vector3.Distance(transform.position, targetBush.transform.position) < 0.8f)
+            EnterHideState();
     }
 
     void EnterHideState()
     {
         agent.isStopped = true;
-        foreach (var r in renderers)
-            r.enabled = false;
+        foreach (var r in renderers) r.enabled = false;
 
         currentState = AIState.Hiding;
         hideTimer = hideDuration;
@@ -166,32 +287,37 @@ public class AIControllerScript : MonoBehaviour
     void HandleHiding()
     {
         hideTimer -= Time.deltaTime;
-
-        if (hideTimer <= 0f)
-        {
-            ExitHideState();
-        }
+        if (hideTimer <= 0) ExitHideState();
     }
 
     void ExitHideState()
     {
+        foreach (var r in renderers) r.enabled = true;
         agent.isStopped = false;
 
-        foreach (var r in renderers)
-            r.enabled = true;
+        targetBush.isOccupied = false;
+        targetBush = null;
 
-        // Release bush
-        if (targetBush)
+        hideCooldownTimer = hideCooldown;
+
+        currentState = AIState.Patrol;
+    }
+
+    // -----------------------------------------
+    // STATE LOGIC
+    // -----------------------------------------
+
+    void CheckStateTransitions()
+    {
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance < detectionRange)
         {
-            targetBush.isOccupied = false;
-            targetBush = null;
+            if (playerSpeed > playerSpeedThreshold)
+                currentState = AIState.Scared;
+            else
+                currentState = AIState.Aggro;
         }
-        targetGroup = null;
-
-        //  Start cooldown timer
-        hideCooldownTimer = hideCooldownTime;
-
-        currentState = AIState.Aggro;
     }
 
     (BushGroupManager, BushSpot) FindNearestBushSpot()
@@ -201,17 +327,17 @@ public class AIControllerScript : MonoBehaviour
         BushSpot nearestBush = null;
         float minDist = Mathf.Infinity;
 
-        foreach (var group in groups)
+        foreach (var g in groups)
         {
-            BushSpot candidate = group.GetAvailableBush(transform.position, detectionRange);
-            if (candidate == null) continue;
+            BushSpot b = g.GetAvailableBush(transform.position, detectionRange);
+            if (b == null) continue;
 
-            float dist = Vector3.Distance(transform.position, candidate.transform.position);
-            if (dist < minDist)
+            float d = Vector3.Distance(transform.position, b.transform.position);
+            if (d < minDist)
             {
-                minDist = dist;
-                nearestGroup = group;
-                nearestBush = candidate;
+                minDist = d;
+                nearestBush = b;
+                nearestGroup = g;
             }
         }
 

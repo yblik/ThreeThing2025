@@ -11008,6 +11008,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueText: {fileID: 0}
+  speakerText: {fileID: 0}
+  dialoguePanel: {fileID: 0}
+  continueButton: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -12750,7 +12753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 3971020525371420599, guid: 31bbe5d96e92e9845afdf01d64b69de3, type: 3}
-  poolSize: 15
+  poolSize: 25
 --- !u!4 &782516632
 Transform:
   m_ObjectHideFlags: 0
@@ -18566,12 +18569,29 @@ MonoBehaviour:
   player: {fileID: 782479814}
   currentState: 1
   detectionRange: 15
-  fleeDistance: 10
+  attackRange: 3
+  stoppingDistance: 2
+  lungeForce: 4
   chaseSpeed: 3.5
   fleeSpeed: 5
+  patrolSpeed: 1.5
   playerSpeedThreshold: 3
+  patrolPoints: []
+  patrolWaitTime: 2
+  wallCheckDistance: 1
+  edgeCheckDistance: 1.2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 0
   hideDuration: 5
-  hideCooldownTime: 5
+  hideCooldown: 5
+  attackCooldown: 1.2
+  lungeDuration: 0.25
+  lungeDistance: 2
+  attackSpeedMultiplier: 6
 --- !u!135 &1189310207
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -25280,12 +25300,29 @@ MonoBehaviour:
   player: {fileID: 782479814}
   currentState: 0
   detectionRange: 15
-  fleeDistance: 10
+  attackRange: 3
+  stoppingDistance: 2
+  lungeForce: 4
   chaseSpeed: 3.5
   fleeSpeed: 5
+  patrolSpeed: 1.5
   playerSpeedThreshold: 3
+  patrolPoints: []
+  patrolWaitTime: 2
+  wallCheckDistance: 1
+  edgeCheckDistance: 1.2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 0
   hideDuration: 5
-  hideCooldownTime: 5
+  hideCooldown: 5
+  attackCooldown: 1.2
+  lungeDuration: 0.25
+  lungeDistance: 2
+  attackSpeedMultiplier: 6
 --- !u!135 &1655762973
 SphereCollider:
   m_ObjectHideFlags: 0
