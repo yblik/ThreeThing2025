@@ -37,10 +37,13 @@ public class PlayerAnimManager : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             animator.SetBool("s", true);
+            //animator.SetLayerWeight(1, 0.7f); // Sets layer 2
+
         }
         else
         {
             animator.SetBool("s", false);
+            //animator.SetLayerWeight(1, 0); // Sets layer 2 
         }
 
     }
