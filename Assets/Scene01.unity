@@ -32812,9 +32812,7 @@ SceneRoots:
   - {fileID: 782516632}
   - {fileID: 675752254}
   - {fileID: 121364082}
-<<<<<<< HEAD
-  - {fileID: 787135658893692213}
-=======
-  - {fileID: 157565085}
-  - {fileID: 1718110388}
->>>>>>> d4e77a74dc514b9a00da219ef6225b49f0e1148c
+  - {fileID: 787135658893692213}   # yours
+  - {fileID: 157565085}            # theirs
+  - {fileID: 1718110388}           # theirs
+
