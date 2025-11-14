@@ -24,9 +24,9 @@ using UnityEngine.UI;
 public class Dialogue : MonoBehaviour
 {
     public Text dialogueText;
-    public Text speakerText;
+    //public Text speakerText;
     public GameObject dialoguePanel;
-    public Button continueButton;
+    //public Button continueButton;
 
     private List<DialoguePart> currentDialogue;
     private int index = 0;
@@ -36,7 +36,15 @@ public class Dialogue : MonoBehaviour
     private void Start()
     {
         dialoguePanel.SetActive(false);
-        continueButton.onClick.AddListener(NextLine);
+        //continueButton.onClick.AddListener(NextLine);
+    }
+    private void Update()
+    {
+        if (dialoguePanel.activeSelf && Input.GetKeyDown(KeyCode.Alpha1)) //might be wrong input
+            //the idea I had was pressign numbers for choices with a prompt on screen with text choices 
+        {
+            NextLine();
+        }
     }
 
     public void StartDialogue(string dialogueID)
@@ -58,7 +66,7 @@ public class Dialogue : MonoBehaviour
     {
         DialoguePart part = currentDialogue[index];
 
-        speakerText.text = part.speaker;
+        //speakerText.text = part.speaker;
         dialogueText.text = "";
 
         StopAllCoroutines();
