@@ -11,7 +11,7 @@ public class Bank : MonoBehaviour
 
     private void Update()
     {
-        Display.text = "Cash:£" + Dinero.ToString(); //spacing causes error with text alignment
+        Display.text = "Cash: £" + Dinero.ToString(); //spacing causes error with text alignment
     }
     public void WorkdaysWorking(int amount)
     {

@@ -6,15 +6,19 @@ public class PlayerCatch : MonoBehaviour
     public int StoredCollectibles = 0;
     public GameObject currentTarget;
     public bool canCatch = false;
+    public bool Catching = false;
 
     public Text Display;
     public int Max = 5; // storage capacity (can be upgraded later)
 
+    public Image CapacityBar;
+
     private void Update()
     {
         Display.text = "Snakes: " + StoredCollectibles.ToString();
+        CapacityBar.fillAmount = (float)StoredCollectibles / Max;
 
-        if (Input.GetMouseButtonDown(0) && canCatch && currentTarget != null)
+        if (Catching && canCatch && currentTarget != null)
         {
             // Confirm the target can actually be caught
             AIControllerScript ai = currentTarget.GetComponent<AIControllerScript>();
@@ -66,5 +70,13 @@ public class PlayerCatch : MonoBehaviour
             canCatch = false;
             currentTarget = null;
         }
+    }
+    public void StartCatching()
+    {
+        Catching = true;
+    }
+    public void StopCatching()
+    {
+        Catching = false;
     }
 }
