@@ -10659,6 +10659,8 @@ MonoBehaviour:
   health: {fileID: 3622427094953670861}
   catcher: {fileID: 1505296217}
   natwest: {fileID: 475865761}
+  roomNumber: 0
+  SwitchRom: {fileID: 1803492852}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -27676,7 +27678,7 @@ MonoBehaviour:
   roomNumber: 0
   movementScript: {fileID: 3622427094953670864}
   roomRefresh: {fileID: 1699280289}
-  hp: {fileID: 0}
+  hp: {fileID: 3622427094953670861}
 --- !u!114 &1803492853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28841,6 +28843,8 @@ MonoBehaviour:
   health: {fileID: 3622427094953670861}
   catcher: {fileID: 1505296217}
   natwest: {fileID: 475865761}
+  roomNumber: 2
+  SwitchRom: {fileID: 1803492852}
 --- !u!65 &1883525728
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Tent.unity
     guid: d1fd1561881b7604ebb510191081b480
+  - enabled: 1
+    path: Assets/Hospital.unity
+    guid: 10893ccc5c61e934891cafbe1984e404
   m_configObjects: {}

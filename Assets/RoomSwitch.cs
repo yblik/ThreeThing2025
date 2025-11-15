@@ -11,12 +11,17 @@ public class RoomSwitch : MonoBehaviour
     public PlayerCatch catcher;
     public Bank natwest;
 
+    public int roomNumber; // 0 = tent, 1 = outside, 2 = hospital
+    public SwitchRoom SwitchRom;
+
 
     public void OnTriggerEnter(Collider other)
     {
+
         if (other.CompareTag("Player"))
         {
             // Assuming you have a method to switch rooms, call it here
+            SwitchRom.roomNumber = roomNumber; 
             Transition.Play("SwitchRoom");
             SaveData();
         }
