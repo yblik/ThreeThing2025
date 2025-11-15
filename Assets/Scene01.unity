@@ -10661,7 +10661,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 0
   SwitchRom: {fileID: 1803492852}
-  returnFromTent: 0
+  returnFromTent: 1
   returnFromHospital: 0
 --- !u!1 &705507993
 GameObject:
