@@ -535,6 +535,7 @@ MonoBehaviour:
   Display: {fileID: 0}
   Max: 5
   CapacityBar: {fileID: 0}
+  bootlegVstart: 0
 --- !u!1 &4026741658025845624
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,7 +1146,7 @@ MonoBehaviour:
   moveSpeed: 6
   groundDrag: 4
   jumpForce: 8
-  jumpCooldown: 0.25
+  jumpCooldown: 0.7
   airMultiplier: 0.4
   walkSpeed: 0
   sprintSpeed: 0
@@ -1195,6 +1196,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ddda4117dd67545be86d3f56667abc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentHealth: 10
+  bar: {fileID: 0}
+  bootlegVstart: 0
 --- !u!1 &8953948889200984903
 GameObject:
   m_ObjectHideFlags: 0

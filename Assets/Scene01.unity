@@ -6504,6 +6504,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dinero: 0
   Display: {fileID: 954823083}
+  bootlegVstart: 0
 --- !u!1 &475993721
 GameObject:
   m_ObjectHideFlags: 0
@@ -24045,7 +24046,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 782479814}
-  outsideTewnt: {fileID: 1051338223}
+  Tent: {fileID: 1051338223}
+  Spawn: {fileID: 0}
+  Hospital: {fileID: 0}
+  Casino: {fileID: 0}
 --- !u!4 &1700786743 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3885273880482553406, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
@@ -25749,6 +25753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomNumber: 0
+  roomRefresh: {fileID: 1699280289}
 --- !u!114 &1803492853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30780,6 +30785,10 @@ PrefabInstance:
     - target: {fileID: 7907171965062499890, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8280895314219006834, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: jumpCooldown
+      value: 0.7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
