@@ -6,9 +6,16 @@ public class RoomRefresh : MonoBehaviour
 {
     public Transform player;
     public Transform outsideTewnt;
+    public bool worksonce = false;
 
-    public void Start()
+
+    private void Update()
     {
-        player.position = outsideTewnt.position;
+        if (!worksonce)
+        {
+            player.position = outsideTewnt.position;
+            print("work");
+            worksonce = true;
+        }
     }
 }
