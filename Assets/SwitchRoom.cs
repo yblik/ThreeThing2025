@@ -10,6 +10,7 @@ public class SwitchRoom : MonoBehaviour
     public ThirdPersonMovement movementScript;
 
     public RoomRefresh roomRefresh;
+    public Health hp;
     public void Switch()
     {
         if (roomNumber == 0)
@@ -28,8 +29,16 @@ public class SwitchRoom : MonoBehaviour
     //instead of void start
     public void BootlegStart()
     {
-        UnlockMovement();
-        LeftRoomSpawnPos();
+        if (PlayerPrefs.GetInt("SpawnPoint") == 0)
+        {
+            UnlockMovement();
+        }
+        else
+        {
+            hp.sleep(0);
+        }
+
+            LeftRoomSpawnPos();
 
 
     }

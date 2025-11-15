@@ -2132,6 +2132,18 @@ PrefabInstance:
       propertyPath: bar
       value: 
       objectReference: {fileID: 588269047}
+    - target: {fileID: 1964725495505276398, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: Player
+      value: 
+      objectReference: {fileID: 1148955019}
+    - target: {fileID: 1964725495505276398, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: roomSwitch
+      value: 
+      objectReference: {fileID: 1803492852}
+    - target: {fileID: 1964725495505276398, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: TransitionOut
+      value: 
+      objectReference: {fileID: 1803492855}
     - target: {fileID: 6930451675870410184, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: Display
       value: 
@@ -2187,6 +2199,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 343164e1375180241b9701e6102328dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &1148955019 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1401186839076330692, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+  m_PrefabInstance: {fileID: 1148955014}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1184256317
 GameObject:
   m_ObjectHideFlags: 0

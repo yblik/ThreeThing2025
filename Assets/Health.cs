@@ -56,7 +56,7 @@ public class Health : MonoBehaviour
             // Handle player death here
         }
     }
-    private void sleep(int notalive)
+    public void sleep(int notalive)
     {
         Player.SetLayerWeight(0, 0);
         Player.SetLayerWeight(1, 0);
