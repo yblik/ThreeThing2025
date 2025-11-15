@@ -13,8 +13,15 @@ public class PlayerCatch : MonoBehaviour
 
     public Image CapacityBar;
 
+    public bool bootlegVstart = false;
+
     private void Update()
     {
+        if (!bootlegVstart)
+        {
+            StoredCollectibles = PlayerPrefs.GetInt("StoredSnakes");
+            bootlegVstart = true;
+        }
         Display.text = "Snakes: " + StoredCollectibles.ToString();
         CapacityBar.fillAmount = (float)StoredCollectibles / Max;
 
@@ -62,7 +69,11 @@ public class PlayerCatch : MonoBehaviour
             currentTarget = null;
         }
     }
+    public void SaveSnakeAmount()
+    {
+        PlayerPrefs.SetInt("StoredSnakes", StoredCollectibles);
 
+    }
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Enemy"))

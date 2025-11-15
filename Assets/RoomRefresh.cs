@@ -6,18 +6,16 @@ public class RoomRefresh : MonoBehaviour
 {
     public Transform player;
     public Transform outsideTewnt;
+    public bool worksonce = false;
 
-    public void Awake()
-    {
-        player.position = outsideTewnt.position;
-        print("work");
-    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!worksonce)
         {
             player.position = outsideTewnt.position;
             print("work");
+            worksonce = true;
         }
     }
 }
