@@ -13,6 +13,7 @@ public class RoomSwitch : MonoBehaviour
 
     public int roomNumber; // 0 = tent, 1 = outside, 2 = hospital (always the target)
     public SwitchRoom SwitchRom;
+    public bool returnFromTent;
     public bool returnFromHospital;
 
 
@@ -21,11 +22,16 @@ public class RoomSwitch : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
+            SpawnManager.Instance.SetSpawnPoint(0);
             // Assuming you have a method to switch rooms, call it here
             SwitchRom.roomNumber = roomNumber; 
+            if (returnFromTent == true)
+            {
+                SpawnManager.Instance.SetPoint(0); // Tent
+            }
             if (returnFromHospital == true)
             {
-                SpawnManager.Instance.SetSpawnPoint(2); // Hospital
+                SpawnManager.Instance.SetPoint(1); // Hospital
 
             }
             Transition.Play("SwitchRoom");

@@ -10661,6 +10661,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 0
   SwitchRom: {fileID: 1803492852}
+  returnFromTent: 0
   returnFromHospital: 0
 --- !u!1 &705507993
 GameObject:
@@ -24232,7 +24233,7 @@ Transform:
   m_GameObject: {fileID: 1544383018}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -656.74, y: -323.79, z: 2.79}
+  m_LocalPosition: {x: -654.68, y: -323.79, z: 2.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28847,6 +28848,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 2
   SwitchRom: {fileID: 1803492852}
+  returnFromTent: 0
   returnFromHospital: 0
 --- !u!65 &1883525728
 BoxCollider:

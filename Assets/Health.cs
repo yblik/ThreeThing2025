@@ -46,9 +46,11 @@ public class Health : MonoBehaviour
         if (currentHealth <= 0)
         {
             PlayerPrefs.SetFloat("HP", maxHealth);
-            SpawnManager.Instance.SetSpawnPoint(1); // Hospital spawn
 
-            roomSwitch.roomNumber = 2; //off to medical
+            SpawnManager.Instance.SetRespawn(true); // Hospital spawn
+            SpawnManager.Instance.SetSpawnPoint(2); // Hospital spawn
+
+            //roomSwitch.roomNumber = 2; //off to medical
             roomSwitch.Muertes();
             sleep(1);
 

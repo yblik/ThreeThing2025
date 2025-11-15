@@ -30,13 +30,14 @@ public class SwitchRoom : MonoBehaviour
     //instead of void start
     public void BootlegStart()
     {
-        if ()
+        roomRefresh.SetStartPos();
+        if (SpawnManager.Instance.GetRespawnPoint() == false)
         {
             UnlockMovement();
         }
-        else
-        {
-            hp.sleep(0);
+        if (SpawnManager.Instance.GetRespawnPoint() == true)
+        { 
+            hp.sleep(0); //wait till fully awaken   
         }
 
 

@@ -6,7 +6,10 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance;
 
-    public int spawnIndex = 0; // 0 = normal, 1 = spawn
+    public int spawnIndex = 0; // rooms
+    public int posIndex = 0; // positions
+
+    public bool spawn; // 0 = normal, 1 = spawn
 
     private void Awake()
     {
@@ -29,5 +32,24 @@ public class SpawnManager : MonoBehaviour
     public int GetSpawnPoint()
     {
         return spawnIndex;
+    }
+    public void SetPoint(int index)
+    {
+        posIndex = index;
+    }
+
+    public int GetPoint()
+    {
+        return posIndex;
+    }
+
+    public void SetRespawn(bool set)
+    {
+        spawn = set;
+    }
+
+    public bool GetRespawnPoint()
+    {
+        return spawn;
     }
 }

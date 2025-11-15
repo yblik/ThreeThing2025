@@ -2210,6 +2210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PC: {fileID: 6930451675870410184}
   ThirdPersonMovement: {fileID: 8280895314219006834}
+  hp: {fileID: 1964725495505276398}
 --- !u!4 &870457595996015769 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8ad145361b4f42246b820deb733c7527, type: 3}

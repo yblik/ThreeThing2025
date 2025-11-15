@@ -292,6 +292,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnIndex: 0
+  posIndex: 0
+  spawn: 0
 --- !u!4 &263021080
 Transform:
   m_ObjectHideFlags: 0
@@ -1558,6 +1560,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 1
   SwitchRom: {fileID: 1803492852}
+  returnFromTent: 1
   returnFromHospital: 0
 --- !u!1 &705507993
 GameObject:
@@ -3160,7 +3163,7 @@ MonoBehaviour:
   roomNumber: 1
   movementScript: {fileID: 1148955018}
   roomRefresh: {fileID: 1699280289}
-  hp: {fileID: 0}
+  hp: {fileID: 1148955017}
 --- !u!114 &1803492853
 MonoBehaviour:
   m_ObjectHideFlags: 0
