@@ -6,10 +6,9 @@ public class RoomRefresh : MonoBehaviour
 {
     public Transform player;
     public Transform outsideTewnt;
-    public Transform outsideTewn2t;
 
-    private void Start()
+    public void Start()
     {
-        player = outsideTewnt;
+        player.position = outsideTewnt.position;
     }
 }
