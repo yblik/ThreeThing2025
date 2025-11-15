@@ -11,8 +11,9 @@ public class SwitchRoom : MonoBehaviour
 
     public RoomRefresh roomRefresh;
     public Health hp;
-    public void Switch()
+    public void Switch() //has to be this since animation event
     {
+        SpawnManager.Instance.SetSpawnPoint(roomNumber); // or whatever logic
         if (roomNumber == 0)
         {
             SceneManager.LoadScene("Tent");
@@ -29,7 +30,7 @@ public class SwitchRoom : MonoBehaviour
     //instead of void start
     public void BootlegStart()
     {
-        if (PlayerPrefs.GetInt("SpawnPoint") == 0)
+        if ()
         {
             UnlockMovement();
         }
@@ -38,28 +39,16 @@ public class SwitchRoom : MonoBehaviour
             hp.sleep(0);
         }
 
-            LeftRoomSpawnPos();
-
 
     }
     private void UnlockMovement()
     {
         movementScript.EnableMovement();
     }
-    private void LeftRoomSpawnPos()
+    public void Muertes()
     {
-        roomRefresh.SetStartPos(PlayerPrefs.GetInt("SpawnPoint")); //to be disabled after
-
-        //wake up code here
-        //
-        PlayerPrefs.SetInt("SpawnPoint", 0); //tlike here
-
+        SpawnManager.Instance.SetSpawnPoint(2); // Hospital
+        //SceneManager.LoadScene("Hospital");
     }
-    public void Muertes() //called by health script on death
-    {
-        PlayerPrefs.SetInt("SpawnPoint", 1); //set to hospital bed
-        roomNumber = 2;
 
-    }
-    
 }

@@ -717,7 +717,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 60.000004
+  field of view: 40
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -743,8 +743,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 380735456}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.27632058, y: -0.22205123, z: 0.06574962, w: 0.9327471}
-  m_LocalPosition: {x: -0.48260498, y: -2.4811707, z: -9.433845}
+  m_LocalRotation: {x: 0.13634215, y: 0, z: 0, w: 0.99066186}
+  m_LocalPosition: {x: -0.48260498, y: 1.1188354, z: -6.0038447}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3779,6 +3779,7 @@ MonoBehaviour:
   Spawn: {fileID: 1544383019}
   Hospital: {fileID: 0}
   Casino: {fileID: 0}
+  wah: 0
 --- !u!4 &1700786743 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3885273880482553406, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
@@ -3901,6 +3902,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 1
   SwitchRom: {fileID: 1803492852}
+  returnFromHospital: 1
 --- !u!65 &1738041984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4664,6 +4666,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1699280288}
     m_Modifications:
+    - target: {fileID: 150479895042833552, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: hp
+      value: 
+      objectReference: {fileID: 3622427094953670861}
     - target: {fileID: 159007451044810813, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -624.83

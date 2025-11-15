@@ -262,6 +262,51 @@ Transform:
   - {fileID: 1483765251}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &263021078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 263021080}
+  - component: {fileID: 263021079}
+  m_Layer: 0
+  m_Name: PlayerPosTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &263021079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 263021078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f254062fa0cf234197b824f6f2a1916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnIndex: 0
+--- !u!4 &263021080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 263021078}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 614.72894, y: 324.22882, z: 2.6361556}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &281473631 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 2196504555057400674, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
@@ -1513,6 +1558,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 1
   SwitchRom: {fileID: 1803492852}
+  returnFromHospital: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -2090,6 +2136,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1699280288}
     m_Modifications:
+    - target: {fileID: 150479895042833552, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: hp
+      value: 
+      objectReference: {fileID: 1148955017}
     - target: {fileID: 159007451044810813, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -624.83
@@ -2866,6 +2916,7 @@ MonoBehaviour:
   Spawn: {fileID: 1293084434}
   Hospital: {fileID: 0}
   Casino: {fileID: 0}
+  wah: 0
 --- !u!1 &1725038048
 GameObject:
   m_ObjectHideFlags: 3
@@ -3557,3 +3608,4 @@ SceneRoots:
   - {fileID: 121364082}
   - {fileID: 787135658893692213}
   - {fileID: 886382581}
+  - {fileID: 263021080}

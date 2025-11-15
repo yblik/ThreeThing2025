@@ -12,10 +12,12 @@ public class RoomRefresh : MonoBehaviour
 
     public Transform Hospital; // respawn point / either entering or leaving tent
     public Transform Casino; // either entering or leaving tent
+    public int wah;
 
 
-    public void SetStartPos(int Index) //for leaving back into scene in tent scenes these may never be used
+    public void SetStartPos() //for leaving back into scene in tent scenes these may never be used
     {
+        int Index = SpawnManager.Instance.GetSpawnPoint();
         if (Index == 0)
         {
             player.position = Tent.position;
