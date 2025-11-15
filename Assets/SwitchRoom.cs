@@ -10,36 +10,45 @@ public class SwitchRoom : MonoBehaviour
     public ThirdPersonMovement movementScript;
 
     public RoomRefresh roomRefresh;
-    public void Switch()
+    public Health hp;
+    public void Switch() //has to be this since animation event
     {
+        SpawnManager.Instance.SetSpawnPoint(roomNumber); // or whatever logic
         if (roomNumber == 0)
         {
             SceneManager.LoadScene("Tent");
-            PlayerPrefs.GetInt("SpawnPoint", 0); //same but different
         }
         if (roomNumber == 1)
         {
             SceneManager.LoadScene("Scene01");
-            PlayerPrefs.GetInt("SpawnPoint", 0); //same but different
         }
-        if (roomNumber == 2)
+        if (roomNumber == 2) //must be set - this is a bad system I should be shot
         {
             SceneManager.LoadScene("Hospital");
-            PlayerPrefs.SetInt("SpawnPoint", 1);
         }
     }
     //instead of void start
     public void BootlegStart()
     {
-        UnlockMovement();
-        LeftRoomSpawnPos();
+        if ()
+        {
+            UnlockMovement();
+        }
+        else
+        {
+            hp.sleep(0);
+        }
+
+
     }
     private void UnlockMovement()
     {
         movementScript.EnableMovement();
     }
-    private void LeftRoomSpawnPos()
+    public void Muertes()
     {
-        roomRefresh.SetStartPos(PlayerPrefs.GetInt("SpawnPoint"));
+        SpawnManager.Instance.SetSpawnPoint(2); // Hospital
+        //SceneManager.LoadScene("Hospital");
     }
+
 }

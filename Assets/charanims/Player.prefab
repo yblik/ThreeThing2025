@@ -1156,6 +1156,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 3885273880482553406}
+  canMove: 0
 --- !u!114 &5218527315668262597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1198,7 +1199,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 10
   bar: {fileID: 0}
-  bootlegVstart: 0
+  TransitionOut: {fileID: 0}
+  Player: {fileID: 0}
+  roomSwitch: {fileID: 0}
+  bootlegVstart: 1
 --- !u!1 &8953948889200984903
 GameObject:
   m_ObjectHideFlags: 0
@@ -2205,6 +2209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PC: {fileID: 6930451675870410184}
+  ThirdPersonMovement: {fileID: 8280895314219006834}
 --- !u!4 &870457595996015769 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8ad145361b4f42246b820deb733c7527, type: 3}
