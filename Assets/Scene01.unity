@@ -27122,6 +27122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomNumber: 0
+  movementScript: {fileID: 3622427094953670864}
   roomRefresh: {fileID: 1699280289}
 --- !u!114 &1803492853
 MonoBehaviour:
@@ -32196,6 +32197,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2ddda4117dd67545be86d3f56667abc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3622427094953670864 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8280895314219006834, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+  m_PrefabInstance: {fileID: 3622427094953670860}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 343164e1375180241b9701e6102328dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &4223488861416827713

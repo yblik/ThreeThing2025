@@ -34,6 +34,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
     Rigidbody rb;
 
+    public bool canMove;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -41,9 +43,13 @@ public class ThirdPersonMovement : MonoBehaviour
 
         readyToJump = true;
     }
-
+    public void EnableMovement()
+    {
+        canMove = true;
+    }
     private void Update()
     {
+        if (!canMove) return;
         // ground check
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
 

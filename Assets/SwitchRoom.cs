@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SwitchRoom : MonoBehaviour
 {
     public int roomNumber;
+    public ThirdPersonMovement movementScript;
 
     public RoomRefresh roomRefresh;
     public void Switch()
@@ -26,7 +28,17 @@ public class SwitchRoom : MonoBehaviour
             PlayerPrefs.SetInt("SpawnPoint", 1);
         }
     }
-    public void LeftRoomSpawnPos()
+    //instead of void start
+    public void BootlegStart()
+    {
+        UnlockMovement();
+        LeftRoomSpawnPos();
+    }
+    private void UnlockMovement()
+    {
+        movementScript.EnableMovement();
+    }
+    private void LeftRoomSpawnPos()
     {
         roomRefresh.SetStartPos(PlayerPrefs.GetInt("SpawnPoint"));
     }
