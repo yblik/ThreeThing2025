@@ -15,17 +15,14 @@ public class SwitchRoom : MonoBehaviour
         if (roomNumber == 0)
         {
             SceneManager.LoadScene("Tent");
-            PlayerPrefs.GetInt("SpawnPoint", 0); //same but different
         }
         if (roomNumber == 1)
         {
             SceneManager.LoadScene("Scene01");
-            PlayerPrefs.GetInt("SpawnPoint", 0); //same but different
         }
-        if (roomNumber == 2)
+        if (roomNumber == 2) //must be set - this is a bad system I should be shot
         {
             SceneManager.LoadScene("Hospital");
-            PlayerPrefs.SetInt("SpawnPoint", 1);
         }
     }
     //instead of void start
@@ -33,6 +30,8 @@ public class SwitchRoom : MonoBehaviour
     {
         UnlockMovement();
         LeftRoomSpawnPos();
+
+
     }
     private void UnlockMovement()
     {
@@ -40,6 +39,18 @@ public class SwitchRoom : MonoBehaviour
     }
     private void LeftRoomSpawnPos()
     {
-        roomRefresh.SetStartPos(PlayerPrefs.GetInt("SpawnPoint"));
+        roomRefresh.SetStartPos(PlayerPrefs.GetInt("SpawnPoint")); //to be disabled after
+
+        //wake up code here
+        //
+        PlayerPrefs.SetInt("SpawnPoint", 0); //tlike here
+
     }
+    public void Muertes() //called by health script on death
+    {
+        PlayerPrefs.SetInt("SpawnPoint", 1); //set to hospital bed
+        roomNumber = 2;
+
+    }
+    
 }

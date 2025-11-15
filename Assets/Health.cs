@@ -11,7 +11,12 @@ public class Health : MonoBehaviour
 
     public Image bar;
 
-   
+    public Animator TransitionOut;
+    public Animator Player;
+
+    public SwitchRoom roomSwitch;
+
+
     public bool bootlegVstart = false;
 
     private void Update()
@@ -21,6 +26,7 @@ public class Health : MonoBehaviour
             currentHealth = PlayerPrefs.GetFloat("HP");
             if (currentHealth == 0)
             {
+
                 currentHealth = maxHealth; //lying in bed
             }
 
@@ -40,7 +46,34 @@ public class Health : MonoBehaviour
         if (currentHealth <= 0)
         {
             PlayerPrefs.SetFloat("HP", maxHealth);
+            PlayerPrefs.SetInt("SpawnPoint", 1); //tlike here
+            roomSwitch.Muertes();
+            sleep(1);
+
+
+            TransitionOut.Play("SwitchRoom"); //get things into motion
+
             // Handle player death here
         }
+    }
+    private void sleep(int notalive)
+    {
+        Player.SetLayerWeight(0, 0);
+        Player.SetLayerWeight(1, 0);
+        Player.SetLayerWeight(2, 1);
+        if (notalive == 0)
+        {
+            Player.SetBool("wakeUp", true);
+        }
+        else
+        {
+            Player.SetBool("dead", false);
+        }
+    }
+    public void backinaction()
+    {
+        Player.SetLayerWeight(0, 1);
+        Player.SetLayerWeight(1, 1);
+        Player.SetLayerWeight(2, 0);
     }
 }
