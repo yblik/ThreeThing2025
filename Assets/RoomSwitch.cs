@@ -18,6 +18,7 @@ public class RoomSwitch : MonoBehaviour
         {
             // Assuming you have a method to switch rooms, call it here
             Transition.Play("SwitchRoom");
+            SaveData();
         }
     }
     public void SaveData()

@@ -5,32 +5,25 @@ using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
-    public int maxHealth = 10;
+    static int maxHealth = 10;
 
-    private float currentHealth;
+    public float currentHealth = maxHealth;
 
     public Image bar;
 
-    void Start()
-    {
-        currentHealth = PlayerPrefs.GetFloat("HP");
-        if (currentHealth == 0)
-        {
-            currentHealth = maxHealth; //lying in bed
-        }
-    }
+   
     public bool bootlegVstart = false;
 
     private void Update()
     {
         if (!bootlegVstart)
         {
+            currentHealth = PlayerPrefs.GetFloat("HP");
             if (currentHealth == 0)
             {
                 currentHealth = maxHealth; //lying in bed
             }
 
-            currentHealth = PlayerPrefs.GetFloat("HP");
             bootlegVstart = true;
         }
         bar.fillAmount = currentHealth / maxHealth;
