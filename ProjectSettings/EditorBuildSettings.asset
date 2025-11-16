@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Hospital.unity
     guid: 10893ccc5c61e934891cafbe1984e404
+  - enabled: 1
+    path: Assets/Casino.unity
+    guid: ae7cf7979bc48fb4fad7ba927a4b29b7
   m_configObjects: {}

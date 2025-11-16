@@ -121,7 +121,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: 188bb71512560414b8c01b73f89194c1, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!1 &47677338
 GameObject:
   m_ObjectHideFlags: 0
@@ -2139,6 +2139,8 @@ MonoBehaviour:
   SwitchRom: {fileID: 1803492852}
   returnFromTent: 1
   returnFromHospital: 0
+  returnFromShop: 0
+  returnFromCasino: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -3889,6 +3891,8 @@ MonoBehaviour:
   SwitchRom: {fileID: 1803492852}
   returnFromTent: 1
   returnFromHospital: 0
+  returnFromShop: 0
+  returnFromCasino: 0
 --- !u!65 &1449866664
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4391,8 +4395,8 @@ MonoBehaviour:
   player: {fileID: 1148955015}
   Tent: {fileID: 1773556017}
   Spawn: {fileID: 1293084434}
-  Hospital: {fileID: 0}
-  Casino: {fileID: 0}
+  Hospital: {fileID: 636178250}
+  Casino: {fileID: 636178250}
   wah: 0
 --- !u!1 &1725038048
 GameObject:

@@ -4169,7 +4169,7 @@ Transform:
   m_GameObject: {fileID: 1544383018}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -666.1, y: -323.79, z: 18.6}
+  m_LocalPosition: {x: -627.18, y: -322.13, z: 5.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4393,8 +4393,8 @@ MonoBehaviour:
   player: {fileID: 782479814}
   Tent: {fileID: 1051338223}
   Spawn: {fileID: 1544383019}
-  Hospital: {fileID: 0}
-  Casino: {fileID: 0}
+  Hospital: {fileID: 485705670}
+  Casino: {fileID: 485705670}
   wah: 0
 --- !u!4 &1700786743 stripped
 Transform:
@@ -4580,6 +4580,8 @@ MonoBehaviour:
   SwitchRom: {fileID: 1803492852}
   returnFromTent: 0
   returnFromHospital: 1
+  returnFromShop: 0
+  returnFromCasino: 0
 --- !u!65 &1738041984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5635,6 +5637,8 @@ MonoBehaviour:
   SwitchRom: {fileID: 1803492852}
   returnFromTent: 0
   returnFromHospital: 1
+  returnFromShop: 0
+  returnFromCasino: 0
 --- !u!65 &1995442098
 BoxCollider:
   m_ObjectHideFlags: 0
