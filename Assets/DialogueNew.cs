@@ -3,80 +3,53 @@ using UnityEngine;
 public class DialogueNew : MonoBehaviour
 {
     public GameObject zeroChoice;     // Main menu UI
-    public GameObject choicePanel;    // Shared panel for Yap and Buy options
+    public GameObject choicePanel;    // Optional follow-up UI
     public GameObject nevermind;      // Ends convo
-    public GameObject yap;            // Yap convo
-    public GameObject buy;            // Buy convo
-    public GameObject anythingElse;   // Shown after yap
-    public GameObject tooPoor;        // Message shown if cash <= 0
+    public GameObject yap;            // Yap response
+    public GameObject buy;            // Buy response
+    public GameObject anythingElse;   // Optional follow-up
+    public GameObject tooPoor;        // Message if cash <= 0
 
-    public int cash = 0;              // Player's current cash
+    public Bank cash;                 // Player's current cash
+    public int talkType = 0;          // Optional: 0 = phone, 1 = nurse, etc.
 
-    private enum TalkStage { Start, Yap, Buy, End }
-    private TalkStage talkStage = TalkStage.Start;
+    private bool inDialogue = true;
 
     private void Update()
     {
-        switch (talkStage)
+        if (!inDialogue) return;
+
+        zeroChoice.SetActive(true);
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            case TalkStage.Start:
-                zeroChoice.SetActive(true);
-
-                if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    // Both 1 and 2 go to Yap
-                    Clear();
-                    yap.SetActive(true);
-                    choicePanel.SetActive(true);
-                    talkStage = TalkStage.Yap;
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha3))
-                {
-                    Clear();
-                    buy.SetActive(true);
-                    choicePanel.SetActive(true);
-                    talkStage = TalkStage.Buy;
-                }
-                break;
-
-            case TalkStage.Yap:
-                if (Input.GetKeyDown(KeyCode.Alpha1))
-                {
-                    // Restart convo
-                    Clear();
-                    talkStage = TalkStage.Start;
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    // End convo
-                    Clear();
-                    nevermind.SetActive(true);
-                    talkStage = TalkStage.End;
-                }
-                break;
-
-            case TalkStage.Buy:
-                if (Input.GetKeyDown(KeyCode.Alpha1))
-                {
-                    Clear();
-                    if (cash > 0)
-                    {
-                        // Proceed with buy logic here
-                        Debug.Log("Purchase successful!");
-                        // Optionally reduce cash or trigger item logic
-                    }
-                    else
-                    {
-                        tooPoor.SetActive(true);
-                    }
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    Clear();
-                    nevermind.SetActive(true);
-                    talkStage = TalkStage.End;
-                }
-                break;
+            // Nevermind
+            Clear();
+            nevermind.SetActive(true);
+            EndDialogue();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            // Yap
+            Clear();
+            yap.SetActive(true);
+            choicePanel.SetActive(true); // Optional: show "anything else?" buttons
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            // Buy
+            Clear();
+            if (cash != null && cash.Dinero > 0) //money
+            {
+                buy.SetActive(true);
+                // Optionally deduct cash here
+                // cash.amount -= itemCost;
+            }
+            else
+            {
+                tooPoor.SetActive(true);
+            }
+            choicePanel.SetActive(true); // Optional: show "anything else?" buttons
         }
     }
 
@@ -91,5 +64,18 @@ public class DialogueNew : MonoBehaviour
 
         anythingElse.SetActive(false);
         tooPoor.SetActive(false);
+    }
+
+    public void EndDialogue()
+    {
+        inDialogue = false;
+        // Optionally disable this script or notify another system
+    }
+
+    // Optional: call this from a button to restart the menu
+    public void RestartDialogue()
+    {
+        Clear();
+        inDialogue = true;
     }
 }
