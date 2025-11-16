@@ -11,13 +11,17 @@ public class Health : MonoBehaviour
 
     public Image bar;
 
-    public Animator TransitionOut;
     public Animator Player;
 
     public SwitchRoom roomSwitch;
 
+    public CatchReciever catchReciever;
+
+    public Animator PlayerObjPos;
+
 
     public bool bootlegVstart = false;
+    public bool Dead = false;
 
     private void Update()
     {
@@ -43,8 +47,9 @@ public class Health : MonoBehaviour
     {
         currentHealth -= damage;
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !Dead)
         {
+
             print("Player Dead");
             PlayerPrefs.SetFloat("HP", maxHealth);
 
@@ -55,8 +60,8 @@ public class Health : MonoBehaviour
             roomSwitch.Muertes();
             sleep(1);
 
-
-            TransitionOut.Play("SwitchRoom"); //get things into motion
+            
+            Dead = true;
 
             // Handle player death here
         }
@@ -72,7 +77,9 @@ public class Health : MonoBehaviour
         }
         else
         {
-            Player.SetBool("dead", false);
+            PlayerObjPos.Play("dying");
+            Player.Play("Death");
+
         }
     }
     public void backinaction()

@@ -3902,6 +3902,7 @@ MonoBehaviour:
   natwest: {fileID: 475865761}
   roomNumber: 1
   SwitchRom: {fileID: 1803492852}
+  returnFromTent: 0
   returnFromHospital: 1
 --- !u!65 &1738041984
 BoxCollider:
@@ -4670,6 +4671,10 @@ PrefabInstance:
       propertyPath: hp
       value: 
       objectReference: {fileID: 3622427094953670861}
+    - target: {fileID: 150479895042833552, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: TransitionOut
+      value: 
+      objectReference: {fileID: 1803492855}
     - target: {fileID: 159007451044810813, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -624.83
@@ -4730,6 +4735,10 @@ PrefabInstance:
       propertyPath: bootlegVstart
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1964725495505276398, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: catchReciever
+      value: 
+      objectReference: {fileID: 3622427094953670863}
     - target: {fileID: 6930451675870410184, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: Display
       value: 
@@ -4767,6 +4776,17 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 1401186839076330692, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
   m_PrefabInstance: {fileID: 3622427094953670860}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3622427094953670863 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 150479895042833552, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+  m_PrefabInstance: {fileID: 3622427094953670860}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 531388172e33dc14c92280d5390642b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3622427094953670864 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8280895314219006834, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}

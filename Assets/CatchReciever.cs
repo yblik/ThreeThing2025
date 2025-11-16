@@ -7,11 +7,24 @@ public class CatchReciever : MonoBehaviour
     public PlayerCatch PC;
     public ThirdPersonMovement ThirdPersonMovement;
     public Health hp;
+    public Animator TransitionOut;
 
     public void StartMove()
     {
-        ThirdPersonMovement.EnableMovement();
-        hp.backinaction();
+        if (!hp.Dead)
+        {
+            ThirdPersonMovement.EnableMovement();
+            hp.backinaction();
+            SpawnManager.Instance.SetRespawn(false);
+        }
+    }
+    public void DeathDone()
+    {
+        if (hp.Dead)
+        {
+            TransitionOut.Play("SwitchRoom"); //get things into motion
+        }
+
     }
     public void StartCatch()
     {
