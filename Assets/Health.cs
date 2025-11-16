@@ -55,6 +55,7 @@ public class Health : MonoBehaviour
 
             SpawnManager.Instance.SetRespawn(true); // Hospital spawn
             SpawnManager.Instance.SetPoint(1); // Hospital spawn
+            roomSwitch.roomNumber = 2; //off to medical
 
             //roomSwitch.roomNumber = 2; //off to medical
             roomSwitch.Muertes();

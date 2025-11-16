@@ -13,7 +13,11 @@ public class SwitchRoom : MonoBehaviour
     public Health hp;
     public void Switch() //has to be this since animation event
     {
-        SpawnManager.Instance.SetSpawnPoint(roomNumber); // or whatever logic
+        if (!hp.Dead)
+        {
+            SpawnManager.Instance.SetSpawnPoint(roomNumber); // or whatever logic
+        }
+
         if (roomNumber == 0)
         {
             SceneManager.LoadScene("Tent");
@@ -49,6 +53,7 @@ public class SwitchRoom : MonoBehaviour
     public void Muertes()
     {
         SpawnManager.Instance.SetSpawnPoint(2); // Hospital
+        SpawnManager.Instance.SetPoint(1); // Hospital bed
         //SceneManager.LoadScene("Hospital");
     }
 
