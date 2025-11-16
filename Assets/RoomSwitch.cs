@@ -15,6 +15,8 @@ public class RoomSwitch : MonoBehaviour
     public SwitchRoom SwitchRom;
     public bool returnFromTent;
     public bool returnFromHospital;
+    public bool returnFromShop;
+    public bool returnFromCasino;
 
 
     public void OnTriggerEnter(Collider other)
@@ -33,6 +35,14 @@ public class RoomSwitch : MonoBehaviour
             {
                 SpawnManager.Instance.SetPoint(1); // Hospital
 
+            }
+            if (returnFromShop == true)
+            {
+                SpawnManager.Instance.SetPoint(2); // Shop
+            }
+            if (returnFromCasino == true)
+            {
+                SpawnManager.Instance.SetPoint(3); // Casino
             }
             Transition.Play("SwitchRoom");
             SaveData();

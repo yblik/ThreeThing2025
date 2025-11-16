@@ -30,6 +30,14 @@ public class SwitchRoom : MonoBehaviour
         {
             SceneManager.LoadScene("Hospital");
         }
+        if (roomNumber == 3) 
+        {
+            SceneManager.LoadScene("Shop");
+        }
+        if (roomNumber == 4)
+        {
+            SceneManager.LoadScene("Casino");
+        }
     }
     //instead of void start
     public void BootlegStart()
