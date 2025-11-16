@@ -34,5 +34,6 @@ public class RoomRefresh : MonoBehaviour
         {
             player.position = Casino.position;
         }
+        print("SHOULD CHANGE POS");
     }
 }

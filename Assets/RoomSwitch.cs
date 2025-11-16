@@ -24,7 +24,7 @@ public class RoomSwitch : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            SpawnManager.Instance.SetSpawnPoint(0);
+            SpawnManager.Instance.SetRespawn(false);
             // Assuming you have a method to switch rooms, call it here
             SwitchRom.roomNumber = roomNumber; 
             if (returnFromTent == true)
