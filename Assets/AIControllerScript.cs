@@ -61,6 +61,7 @@ public class AIControllerScript : MonoBehaviour
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player").transform;
 
+        BurrowOut(); // emerge on spawn
         lastPlayerPos = player.position;
 
         agent.stoppingDistance = stoppingDistance;
@@ -92,7 +93,7 @@ public class AIControllerScript : MonoBehaviour
         {
             case AIState.Patrol: Patrol(); break;
             case AIState.Aggro: ChasePlayer(); break;
-            case AIState.Scared: TryHideInBush(); break;
+            case AIState.Scared: TryBurrow(); break;
             case AIState.Hiding: HandleHiding(); break;
             case AIState.Attack: HandleAttack(); break;
         }
@@ -246,40 +247,26 @@ public class AIControllerScript : MonoBehaviour
     // HIDING
     // ------------------------------------------------------
 
-    void TryHideInBush()
+    void TryBurrow()
     {
         if (hideCooldownTimer > 0) return;
 
         agent.speed = fleeSpeed;
 
-        if (targetBush == null)
-        {
-            (BushGroupManager mgr, BushSpot bush) = FindNearestBushSpot();
+        Vector3 dir = (transform.position - player.position).normalized;
+        Vector3 flee = transform.position + dir * 5f;
 
-            if (bush == null)
-            {
-                Vector3 dir = (transform.position - player.position).normalized;
-                Vector3 flee = transform.position + dir * 5f;
+        if (NavMesh.SamplePosition(flee, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+            agent.SetDestination(hit.position);
 
-                if (NavMesh.SamplePosition(flee, out NavMeshHit hit, 5f, NavMesh.AllAreas))
-                    agent.SetDestination(hit.position);
-
-                return;
-            }
-
-            targetBush = bush;
-            targetBush.isOccupied = true;
-        }
-
-        agent.SetDestination(targetBush.GetHidePosition());
-
-        if (Vector3.Distance(transform.position, targetBush.transform.position) < 0.8f)
+        if (Vector3.Distance(transform.position, hit.position) < 0.8f)
             EnterHideState();
     }
 
     void EnterHideState()
     {
         agent.isStopped = true;
+        BurrowIn();
 
         foreach (var r in renderers)
             r.enabled = false;
@@ -291,23 +278,32 @@ public class AIControllerScript : MonoBehaviour
     void HandleHiding()
     {
         hideTimer -= Time.deltaTime;
-
         if (hideTimer <= 0)
             ExitHideState();
     }
 
     void ExitHideState()
     {
+        BurrowOut();
+
         foreach (var r in renderers)
             r.enabled = true;
 
         agent.isStopped = false;
-
-        targetBush.isOccupied = false;
-        targetBush = null;
-
         hideCooldownTimer = hideCooldown;
         currentState = AIState.Patrol;
+    }
+
+    void BurrowIn()
+    {
+        // TODO: Trigger burrow-in animation or coroutine
+        Debug.Log("Burrowing into ground...");
+    }
+
+    void BurrowOut()
+    {
+        // TODO: Trigger burrow-out animation or coroutine
+        Debug.Log("Emerging from ground...");
     }
 
     // ------------------------------------------------------
@@ -348,27 +344,29 @@ public class AIControllerScript : MonoBehaviour
         }
     }
 
-    (BushGroupManager, BushSpot) FindNearestBushSpot()
-    {
-        BushGroupManager[] groups = FindObjectsOfType<BushGroupManager>();
-        float best = Mathf.Infinity;
-        BushSpot nearest = null;
-        BushGroupManager chosen = null;
+    //old hide
 
-        foreach (var g in groups)
-        {
-            BushSpot b = g.GetAvailableBush(transform.position, detectionRange);
-            if (b == null) continue;
+    //(BushGroupManager, BushSpot) FindNearestBushSpot()
+    //{
+    //    BushGroupManager[] groups = FindObjectsOfType<BushGroupManager>();
+    //    float best = Mathf.Infinity;
+    //    BushSpot nearest = null;
+    //    BushGroupManager chosen = null;
 
-            float d = Vector3.Distance(transform.position, b.transform.position);
-            if (d < best)
-            {
-                best = d;
-                nearest = b;
-                chosen = g;
-            }
-        }
+    //    foreach (var g in groups)
+    //    {
+    //        BushSpot b = g.GetAvailableBush(transform.position, detectionRange);
+    //        if (b == null) continue;
 
-        return (chosen, nearest);
-    }
+    //        float d = Vector3.Distance(transform.position, b.transform.position);
+    //        if (d < best)
+    //        {
+    //            best = d;
+    //            nearest = b;
+    //            chosen = g;
+    //        }
+    //    }
+
+    //    return (chosen, nearest);
+    //}
 }
