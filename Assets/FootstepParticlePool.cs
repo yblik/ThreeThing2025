@@ -40,7 +40,9 @@ public class FootstepParticlePool : MonoBehaviour
         }
 
         var ps = pool.Dequeue();
+
         ps.transform.position = position;
+
         ps.gameObject.SetActive(true);
         ps.Play();
 
