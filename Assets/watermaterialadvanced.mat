@@ -90,10 +90,10 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 0.7876246, g: 0.8584906, b: 0.71675867, a: 1}
+    - _FoamColor: {r: 0.69386345, g: 0.7264151, b: 0.66131186, a: 1}
     - _FoamSpeed: {r: -0.05, g: 0.03, b: 0, a: 0}
     - _FoamTiling: {r: 2, g: 2, b: 0, a: 0}
-    - _WaterColor: {r: 1, g: 1, b: 1, a: 1}
+    - _WaterColor: {r: 0.8396226, g: 0.7802154, b: 0.7802154, a: 1}
     - _WaterSpeed: {r: 0.1, g: 0.05, b: 0, a: 0}
     - _WaterTiling: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
