@@ -1252,6 +1252,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 435019698}
   m_Mesh: {fileID: -5495902117074765545, guid: 13295585b987bda4989f3b967e502f15, type: 3}
+--- !u!1 &455432869 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7907171965062499890, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+  m_PrefabInstance: {fileID: 1705304623}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &455432871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455432869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c44bf95bfd963e94da1325d41e81bc48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 782479814}
 --- !u!1 &475865759
 GameObject:
   m_ObjectHideFlags: 0
@@ -4383,6 +4401,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3885273880482553406, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
   m_PrefabInstance: {fileID: 3622427094953670860}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1705304623
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.4446299
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.013842443
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9999042
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 181.586
+      objectReference: {fileID: 0}
+    - target: {fileID: 159007451044810813, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907171965062499890, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      propertyPath: m_Name
+      value: Lenina nurse NPC
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7907171965062499890, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 455432871}
+  m_SourcePrefab: {fileID: 100100000, guid: ad244e6f2fa91f04e9d7e71900308427, type: 3}
 --- !u!1 &1725038048
 GameObject:
   m_ObjectHideFlags: 3
@@ -6087,3 +6165,4 @@ SceneRoots:
   - {fileID: 1875135059}
   - {fileID: 348905565}
   - {fileID: 112907274}
+  - {fileID: 1705304623}
