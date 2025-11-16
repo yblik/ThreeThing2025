@@ -78,7 +78,8 @@ public class Health : MonoBehaviour
         else
         {
             PlayerObjPos.Play("dying");
-            Player.Play("Death");
+            Player.SetBool("dead", true);
+
 
         }
     }

@@ -10656,8 +10656,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Transition: {fileID: 1803492855}
-  health: {fileID: 0}
-  catcher: {fileID: 0}
+  health: {fileID: 1322166974}
+  catcher: {fileID: 1804959152}
   natwest: {fileID: 475865761}
   roomNumber: 0
   SwitchRom: {fileID: 1803492852}
@@ -10864,6 +10864,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705881510}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &712034542 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8280895314219006834, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+  m_PrefabInstance: {fileID: 1322166969}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 343164e1375180241b9701e6102328dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &714494182
 GameObject:
   m_ObjectHideFlags: 0
@@ -21212,7 +21223,7 @@ PrefabInstance:
     - target: {fileID: 6050701330070415647, guid: ba98c06a2344b024c83f5f743593b912, type: 3}
       propertyPath: Health
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1322166974}
     - target: {fileID: 9011355986914922778, guid: ba98c06a2344b024c83f5f743593b912, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.99395
@@ -21586,11 +21597,15 @@ PrefabInstance:
     - target: {fileID: 6930451675870410184, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: Display
       value: 
+      objectReference: {fileID: 1762730210}
+    - target: {fileID: 6930451675870410184, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+      propertyPath: Catching
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6930451675870410184, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: CapacityBar
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1249415343}
     - target: {fileID: 7907171965062499890, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
       propertyPath: m_Name
       value: Player
@@ -23188,10 +23203,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5a93dbc23451dc448f40f9b497f5b37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  PC: {fileID: 0}
+  player: {fileID: 1322166970}
+  PC: {fileID: 1804959152}
   Natwest: {fileID: 475865761}
-  triggerDistance: 4
+  triggerDistance: 5
   depositedSnakes: 0
   maxDeposits: 20
 --- !u!1 &1445833335
@@ -27849,9 +27864,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomNumber: 0
-  movementScript: {fileID: 0}
+  movementScript: {fileID: 712034542}
   roomRefresh: {fileID: 1699280289}
-  hp: {fileID: 0}
+  hp: {fileID: 1322166974}
 --- !u!114 &1803492853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27911,6 +27926,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1804959152 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6930451675870410184, guid: 7fcc9f66e1d238a41a28a6e081f2230c, type: 3}
+  m_PrefabInstance: {fileID: 1322166969}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22227d8852125ca439199b177daf3fcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1808914533
 GameObject:
   m_ObjectHideFlags: 0
@@ -29013,8 +29039,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Transition: {fileID: 1803492855}
-  health: {fileID: 0}
-  catcher: {fileID: 0}
+  health: {fileID: 1322166974}
+  catcher: {fileID: 1804959152}
   natwest: {fileID: 475865761}
   roomNumber: 2
   SwitchRom: {fileID: 1803492852}
