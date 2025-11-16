@@ -12,12 +12,13 @@ GameObject:
   - component: {fileID: 6348155489373397622}
   - component: {fileID: 4699379060187114952}
   - component: {fileID: 5384823039242217653}
+  - component: {fileID: 6050701330070415647}
   m_Layer: 0
   m_Name: ouch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8107988477895909501
 Transform:
@@ -105,6 +106,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.83162403, y: 4.9000854, z: 0.78573287}
   m_Center: {x: 0, y: 1.9500444, z: 0}
+--- !u!114 &6050701330070415647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710245478587279983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce919e3376c8a648b2d90178afdfaee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5060860673805950677
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,7 +135,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9011355986914922778
 Transform:
@@ -271,6 +284,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8391222552659086748, guid: 563e651487d5af247a034d9744164515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: -7677471772335586173, guid: 563e651487d5af247a034d9744164515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4683669308469848369, guid: 563e651487d5af247a034d9744164515, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -278,6 +299,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 563e651487d5af247a034d9744164515, type: 3}
       propertyPath: m_Name
       value: SpikeTrap
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 563e651487d5af247a034d9744164515, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1541998606474349963, guid: 563e651487d5af247a034d9744164515, type: 3}
       propertyPath: m_Materials.Array.data[0]

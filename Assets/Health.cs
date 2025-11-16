@@ -45,10 +45,11 @@ public class Health : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            print("Player Dead");
             PlayerPrefs.SetFloat("HP", maxHealth);
 
             SpawnManager.Instance.SetRespawn(true); // Hospital spawn
-            SpawnManager.Instance.SetSpawnPoint(2); // Hospital spawn
+            SpawnManager.Instance.SetPoint(1); // Hospital spawn
 
             //roomSwitch.roomNumber = 2; //off to medical
             roomSwitch.Muertes();

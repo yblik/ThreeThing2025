@@ -18,6 +18,7 @@ public class RoomRefresh : MonoBehaviour
     public void SetStartPos() //for leaving back into scene in tent scenes these may never be used
     {
         int Index = SpawnManager.Instance.GetPoint();
+        SpawnManager.Instance.SetRespawn(false);
         if (Index == 0)
         {
             player.position = Tent.position;
