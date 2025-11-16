@@ -16,6 +16,7 @@ public class SpawnManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            SetPoint(1); //set to bed on game session
             DontDestroyOnLoad(gameObject); // persists across scenes
         }
         else
