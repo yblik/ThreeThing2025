@@ -36,16 +36,16 @@ public class SnakeSpawner : MonoBehaviour
     public bool requireNavMesh = true;
     public float navMeshMaxDistance = 2f;
 
-    [Header("Seperation")]
-    public float minSeperationDistance = 0.5f;
-    public float seperationProbeRadius = 0.3f;
-    public LayerMask seperationMask = ~0;
+    [Header("Separation")]
+    public float minSeparationDistance = 0.5f;
+    public float separationProbeRadius = 0.3f;
+    public LayerMask separationMask = ~0;
 
     // Underground calculations for snakes might be better if an animation played instead of doing transforms?
     [Header("Underground Settings")]
     public bool UndergroundEnable = true;
-    [Range(0f, 1f)] public float spawnUnderground = -0.25f;
-    public float undergroundYOffset = -0.25f;
+    [Range(0f, 1f)] public float spawnUnderground = 0.25f;
+    public float undergroundYOffset = -1.5f; //snake size
     public Vector2 unburrowDelayRange = new Vector2(3f, 8f);
     public bool reburrowAfterUnburrow = false;
     public Vector2 reburrowDelayRange = new Vector2(6f, 12f);
@@ -138,7 +138,7 @@ public class SnakeSpawner : MonoBehaviour
 
         _alive.Enqueue(go);
 
-        //resets NavMeshAgent if avaliable 
+        //resets NavMeshAgent if available 
         var agent = go.GetComponent<UnityEngine.AI.NavMeshAgent>();
         if (agent != null)
         {
@@ -201,13 +201,13 @@ public class SnakeSpawner : MonoBehaviour
             }
         }
 
-        //seperation checking 
-        if (minSeperationDistance > 0f)
+        //separation checking 
+        if (minSeparationDistance > 0f)
         {
-            Collider[] colliders = Physics.OverlapSphere(pos, seperationProbeRadius, seperationMask);
+            Collider[] colliders = Physics.OverlapSphere(pos, separationProbeRadius, separationMask);
             foreach (var col in colliders)
             {
-                if (Vector3.Distance(col.ClosestPoint(pos), pos) < minSeperationDistance)
+                if (Vector3.Distance(col.ClosestPoint(pos), pos) < minSeparationDistance)
                 {
                     position = Vector3.zero;
                     rotation = Quaternion.identity;
