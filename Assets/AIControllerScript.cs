@@ -77,6 +77,17 @@ public class AIControllerScript : MonoBehaviour
     private bool isLunging = false;
     public bool isBurrowed = false;
 
+    [Header("State Check Timing")]
+    public float minStateCheckInterval = 0.5f;
+    public float maxStateCheckInterval = 1.5f;
+    private float stateCheckTimer;
+
+    [Header("Aggro Variations")]
+    [Range(0f, 1f)]
+    public float wanderWhileAggroChance = 0.2f; // 20% chance to wander instead of chasing
+
+
+
     //for object pool: snakeObject.GetComponent<AIControllerScript>().ResetOnSpawn();
 
     private void Start()
@@ -98,11 +109,14 @@ public class AIControllerScript : MonoBehaviour
 
         // set initial random hide time > 10 seconds
         nextHideTime = Random.Range(10f, 20f);
+        stateCheckTimer = Random.Range(minStateCheckInterval, maxStateCheckInterval);
+
     }
 
     public void ResetOnSpawn()
     {
         // reset AI core
+        if (snake != null) snake.enabled = true;
         currentState = AIState.Patrol;
         
         hideTimer = 0f;
@@ -123,6 +137,7 @@ public class AIControllerScript : MonoBehaviour
             // Force re-enable if pooled object disabled agent accidentally
             agent.enabled = true;
         }
+        stateCheckTimer = Random.Range(minStateCheckInterval, maxStateCheckInterval);
 
 
         // play the emerge animation if you have one
@@ -159,7 +174,15 @@ public class AIControllerScript : MonoBehaviour
         }
 
         if (currentState != AIState.Hiding)
-            CheckStateTransitions();
+        {
+            stateCheckTimer -= Time.deltaTime;
+            if (stateCheckTimer <= 0f)
+            {
+                CheckStateTransitions();
+                stateCheckTimer = Random.Range(minStateCheckInterval, maxStateCheckInterval);
+            }
+        }
+
 
         switch (currentState)
         {
@@ -367,7 +390,11 @@ public class AIControllerScript : MonoBehaviour
             // set state based on behavior flags
             if (aggressive)
             {
-                currentState = AIState.Aggro;
+                // small chance to wander instead of chasing
+                if (wanderer && Random.value < wanderWhileAggroChance)
+                    currentState = AIState.Patrol;
+                else
+                    currentState = AIState.Aggro;
             }
             else if (timid && Random.value < hideChance)
             {
@@ -384,6 +411,7 @@ public class AIControllerScript : MonoBehaviour
                 currentState = AIState.Patrol;
         }
     }
+
 
     // ------------------------------
     // EDGE / WALL HANDLING
@@ -493,6 +521,7 @@ public class AIControllerScript : MonoBehaviour
     // ------------------------------
     void BurrowIn()
     {
+        if (!snake.enabled) snake.enabled = true;
         snake.Play("BurrowIn");
         isBurrowed = true;
         // TODO: animate burrow
@@ -501,6 +530,7 @@ public class AIControllerScript : MonoBehaviour
 
     void BurrowOut()
     {
+        if (!snake.enabled) snake.enabled = true;
         snake.Play("BurrowOut");
         isBurrowed = false;
         // TODO: animate emerge
