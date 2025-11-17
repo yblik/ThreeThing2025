@@ -13,10 +13,7 @@ public class SwitchRoom : MonoBehaviour
     public Health hp;
     public void Switch() //has to be this since animation event
     {
-        if (!hp.Dead)
-        {
             SpawnManager.Instance.SetSpawnPoint(roomNumber); // or whatever logic
-        }
 
         if (roomNumber == 0)
         {

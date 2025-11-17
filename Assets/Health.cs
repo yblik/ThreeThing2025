@@ -18,6 +18,7 @@ public class Health : MonoBehaviour
     public CatchReciever catchReciever;
 
     public Animator PlayerObjPos;
+    public Animator Flash;
 
 
     public bool bootlegVstart = false;
@@ -46,6 +47,7 @@ public class Health : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+        Flash.Play("Ouch");
 
         if (currentHealth <= 0 && !Dead)
         {

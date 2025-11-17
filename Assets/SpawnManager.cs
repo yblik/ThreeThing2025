@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public static SpawnManager Instance;
+    public static SpawnManager Instance { get; private set; }
 
-    public int spawnIndex = 0; // rooms
-    public int posIndex = 0; // positions
-
-    public bool spawn; // 0 = normal, 1 = spawn
+    public int spawnIndex = 0;
+    public int posIndex = 0;
+    public bool spawn;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            SetPoint(1); //set to bed on game session
-            DontDestroyOnLoad(gameObject); // persists across scenes
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return; // <-- IMPORTANT
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        SetPoint(1);
     }
+
+
 
     public void SetSpawnPoint(int index)
     {
