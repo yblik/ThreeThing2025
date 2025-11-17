@@ -103,8 +103,10 @@ public class SnakeHandler : MonoBehaviour
         var aiController = snake.GetComponent<AIControllerScript>();
         if (aiController != null && player != null)
         {
+            aiController.ResetOnSpawn();
             aiController.player = player;
         }
+
 
         snake.SetActive(false);
         _pool.Enqueue(snake);

@@ -9,7 +9,6 @@ public class AIControllerScript : MonoBehaviour
     [Header("References")]
     public Transform player;
     private NavMeshAgent agent;
-    private MeshRenderer[] renderers;
 
     [Header("AI Settings")]
     public AIState currentState = AIState.Patrol;
@@ -22,6 +21,13 @@ public class AIControllerScript : MonoBehaviour
     public float playerSpeedThreshold = 3.0f;
 
     public Animator snake;
+    public Collider snakeCollider; // assign in inspector
+
+    [Header("Behavior Variations")]
+    public bool aggressive = true;    // will attack player
+    public bool timid = false;        // will flee/hide
+    public bool wanderer = true;      // will patrol/wander
+    public float hideChance = 0.2f;   // chance to hide when scared
 
     [Header("Patrol")]
     public Transform[] patrolPoints;
@@ -40,7 +46,8 @@ public class AIControllerScript : MonoBehaviour
     public float hideCooldown = 5f;
     private float hideCooldownTimer;
     private float hideTimer;
-    private BushSpot targetBush;
+    private float nextHideTime;           // random timer for auto-hiding
+
 
     [Header("Attack Settings")]
     public float attackCooldown = 1.2f;
@@ -49,12 +56,10 @@ public class AIControllerScript : MonoBehaviour
     private float lungeTimer;
     public float attackSpeedMultiplier = 6f;
 
-    // rotation & smoothing
     [Header("Rotation Smoothing")]
     public float turnSpeed = 8f;
     public float minMoveToRotate = 0.05f;
 
-    // unstuck
     [Header("Unstuck Settings")]
     public float unstuckThreshold = 0.03f;    // how small movement counts as "not moving"
     public float unstuckTime = 1.0f;          // how long before we try to unstuck
@@ -62,7 +67,6 @@ public class AIControllerScript : MonoBehaviour
     private Vector3 lastFramePos;
     private float stuckTimer;
 
-    // path update throttling (so chase still updates even if player stands still)
     [Header("Path Updating")]
     public float pathUpdateInterval = 0.25f;
     private float pathUpdateTimer;
@@ -71,15 +75,13 @@ public class AIControllerScript : MonoBehaviour
     private float playerSpeed;
     private Quaternion targetRotation;
     private bool isLunging = false;
-    private bool isBurrowed = false;
+    public bool isBurrowed = false;
 
     //for object pool: snakeObject.GetComponent<AIControllerScript>().ResetOnSpawn();
-
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        renderers = GetComponentsInChildren<MeshRenderer>();
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -93,13 +95,16 @@ public class AIControllerScript : MonoBehaviour
         targetRotation = transform.rotation;
         lastPlayerPos = player != null ? player.position : Vector3.zero;
         lastFramePos = transform.position;
+
+        // set initial random hide time > 10 seconds
+        nextHideTime = Random.Range(10f, 20f);
     }
 
     public void ResetOnSpawn()
     {
         // reset AI core
         currentState = AIState.Patrol;
-        targetBush = null;
+        
         hideTimer = 0f;
         hideCooldownTimer = 2f;  // cannot hide instantly on spawn
 
@@ -119,15 +124,12 @@ public class AIControllerScript : MonoBehaviour
             agent.enabled = true;
         }
 
-        // make snake visible again (important!)
-        if (renderers != null)
-        {
-            foreach (var r in renderers)
-                r.enabled = true;
-        }
 
         // play the emerge animation if you have one
         BurrowOut();
+
+        // set new random hide timer
+        nextHideTime = Random.Range(10f, 20f);
     }
 
     private void Update()
@@ -146,6 +148,15 @@ public class AIControllerScript : MonoBehaviour
         }
 
         HandleEdgeAvoidance();
+
+        // ------------------------------
+        // RANDOM HIDE TIMER
+        // ------------------------------
+        if (Time.timeSinceLevelLoad >= nextHideTime && !isBurrowed && timid)
+        {
+            EnterHideState();
+            nextHideTime = Time.timeSinceLevelLoad + Random.Range(10f, 25f); // reset next hide
+        }
 
         if (currentState != AIState.Hiding)
             CheckStateTransitions();
@@ -172,6 +183,8 @@ public class AIControllerScript : MonoBehaviour
     // ------------------------------
     void Patrol()
     {
+        if (!wanderer) return; // skip patrol if not a wanderer
+
         agent.speed = patrolSpeed;
 
         if (patrolPoints == null || patrolPoints.Length == 0)
@@ -192,7 +205,8 @@ public class AIControllerScript : MonoBehaviour
     {
         if (patrolPoints == null || patrolPoints.Length == 0) return;
 
-        agent.SetDestination(patrolPoints[patrolIndex].position);
+        int randomIndex = Random.Range(0, patrolPoints.Length);
+        agent.SetDestination(patrolPoints[randomIndex].position);
         patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
         patrolWaitTimer = patrolWaitTime;
     }
@@ -294,37 +308,27 @@ public class AIControllerScript : MonoBehaviour
     // ------------------------------
     void TryHideInBushOrFlee()
     {
-        if (hideCooldownTimer > 0f) return;
+        if (!timid || hideCooldownTimer > 0f) return;
 
         agent.speed = fleeSpeed;
 
-        // find bush spot if available
-        if (targetBush == null)
-        {
-            (BushGroupManager group, BushSpot bush) = FindNearestBushSpot();
-            if (bush != null)
-            {
-                targetBush = bush;
-                targetBush.isOccupied = true;
-                agent.SetDestination(targetBush.GetHidePosition());
-                return;
-            }
-        }
-
-        // fallback flee
         Vector3 dir = (transform.position - player.position).normalized;
         Vector3 flee = transform.position + dir * 5f;
         if (NavMesh.SamplePosition(flee, out NavMeshHit hit, 5f, NavMesh.AllAreas))
             agent.SetDestination(hit.position);
+
+        // chance to hide instead
+        if (Random.value < hideChance)
+            EnterHideState();
     }
 
     void EnterHideState()
     {
-        agent.isStopped = true;
-        BurrowIn();
+        if (snakeCollider != null)
+            snakeCollider.enabled = false; // make uncatchable
 
-        foreach (var r in renderers)
-            r.enabled = false;
+        agent.isStopped = true;            // halt AI movement
+        BurrowIn();                        // play burrow animation
 
         currentState = AIState.Hiding;
         hideTimer = hideDuration;
@@ -339,16 +343,14 @@ public class AIControllerScript : MonoBehaviour
 
     void ExitHideState()
     {
-        BurrowOut();
+        if (snakeCollider != null)
+            snakeCollider.enabled = true; // re-enable collider
 
-        foreach (var r in renderers)
-            r.enabled = true;
+        BurrowOut();                       // play emerge animation
+        agent.isStopped = false;           // resume AI movement
 
-        agent.isStopped = false;
-        hideCooldownTimer = hideCooldown;
-        if (targetBush != null) targetBush.isOccupied = false;
-        targetBush = null;
         currentState = AIState.Patrol;
+        hideCooldownTimer = hideCooldown;
     }
 
     // ------------------------------
@@ -362,16 +364,23 @@ public class AIControllerScript : MonoBehaviour
 
         if (dist < detectionRange)
         {
-            // keep original logic: fast player => scared, otherwise aggro
-            if (playerSpeed > playerSpeedThreshold)
-                currentState = AIState.Scared;
-            else
+            // set state based on behavior flags
+            if (aggressive)
+            {
                 currentState = AIState.Aggro;
+            }
+            else if (timid && Random.value < hideChance)
+            {
+                currentState = AIState.Scared;
+            }
+            else if (wanderer)
+            {
+                currentState = AIState.Patrol;
+            }
         }
         else
         {
-            // if player out of range, return to patrol
-            if (currentState != AIState.Patrol && currentState != AIState.Hiding)
+            if (wanderer)
                 currentState = AIState.Patrol;
         }
     }
@@ -383,32 +392,25 @@ public class AIControllerScript : MonoBehaviour
     {
         Vector3 fwd = transform.forward;
 
-        // wall ahead? pick a new nearby nav point instead of rotating in-place
         if (Physics.Raycast(transform.position + Vector3.up * 0.3f, fwd, out RaycastHit hitWall, wallCheckDistance, wallMask))
         {
-            // pick a random direction away from wall to navigate toward
             Vector3 away = (transform.position - hitWall.point).normalized * 1.5f;
             Vector3 candidate = transform.position + away + Random.insideUnitSphere * 1f;
             candidate.y = transform.position.y;
 
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-            {
                 agent.SetDestination(hit.position);
-            }
             else
             {
-                // fallback small random wander
                 Vector3 rnd = transform.position + Quaternion.Euler(0, Random.Range(-120f, 120f), 0) * Vector3.forward * 1.5f;
                 if (NavMesh.SamplePosition(rnd, out NavMeshHit hit2, 2f, NavMesh.AllAreas))
                     agent.SetDestination(hit2.position);
             }
         }
 
-        // ledge/edge detector - find a safe point to step back to
         Vector3 downCheckOrigin = transform.position + fwd * 0.3f + Vector3.up * 0.2f;
         if (!Physics.Raycast(downCheckOrigin, Vector3.down, out RaycastHit hitDown, edgeCheckDistance, groundMask))
         {
-            // step back and re-path
             Vector3 back = transform.position - fwd * 1.2f + Random.insideUnitSphere * 0.5f;
             back.y = transform.position.y;
             if (NavMesh.SamplePosition(back, out NavMeshHit hit, 2f, NavMesh.AllAreas))
@@ -421,7 +423,6 @@ public class AIControllerScript : MonoBehaviour
     // ------------------------------
     void SmoothRotateWithMovement()
     {
-        // if lunging, face the player directly
         if (isLunging && player != null)
         {
             Vector3 dir = player.position - transform.position;
@@ -434,7 +435,6 @@ public class AIControllerScript : MonoBehaviour
             return;
         }
 
-        // rotate only when actually moving to avoid twitching in corners
         if (agent.velocity.magnitude < minMoveToRotate) return;
 
         Vector3 moveDir = agent.velocity;
@@ -461,7 +461,6 @@ public class AIControllerScript : MonoBehaviour
 
         if (stuckTimer > unstuckTime)
         {
-            // try a series of candidate points; pick the first valid nav hit
             bool movedOk = false;
             for (int i = 0; i < 6; i++)
             {
@@ -477,7 +476,6 @@ public class AIControllerScript : MonoBehaviour
                 }
             }
 
-            // if no candidate found, fallback to a random short wander
             if (!movedOk)
             {
                 Vector3 rnd = transform.position + Random.insideUnitSphere * 1.5f;
@@ -491,48 +489,21 @@ public class AIControllerScript : MonoBehaviour
     }
 
     // ------------------------------
-    // FIND BUSH / HIDING helper
-    // ------------------------------
-    (BushGroupManager, BushSpot) FindNearestBushSpot()
-    {
-        BushGroupManager[] groups = FindObjectsOfType<BushGroupManager>();
-        BushGroupManager nearestGroup = null;
-        BushSpot nearestBush = null;
-        float minDist = Mathf.Infinity;
-
-        foreach (var g in groups)
-        {
-            BushSpot b = g.GetAvailableBush(transform.position, detectionRange);
-            if (b == null) continue;
-
-            float d = Vector3.Distance(transform.position, b.transform.position);
-            if (d < minDist)
-            {
-                minDist = d;
-                nearestBush = b;
-                nearestGroup = g;
-            }
-        }
-
-        return (nearestGroup, nearestBush);
-    }
-
-    // ------------------------------
     // BURROW placeholders
     // ------------------------------
     void BurrowIn()
     {
+        snake.Play("BurrowIn");
         isBurrowed = true;
         // TODO: animate burrow
         Debug.Log("Burrowing...");
-        snake.Play("BurrowIn");
     }
 
     void BurrowOut()
     {
+        snake.Play("BurrowOut");
         isBurrowed = false;
         // TODO: animate emerge
         Debug.Log("Emerging...");
-        snake.Play("BurrowOut");
     }
 }
