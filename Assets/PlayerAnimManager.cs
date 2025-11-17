@@ -26,7 +26,7 @@ public class PlayerAnimManager : MonoBehaviour
         }
         Debug.Log(isMoving);
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             animator.SetBool("j", true);
         }
