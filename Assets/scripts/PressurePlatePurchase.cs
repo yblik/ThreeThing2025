@@ -2,18 +2,15 @@ using UnityEngine;
 
 public class PressurePlatePurchase : MonoBehaviour
 {
-    [Header("Purchase Settings")]
     public int cost = 50;
-    public GameObject itemToUnlock;   // The item/building you want to enable
+    public GameObject itemToUnlock;
     public bool destroyAfterPurchase = true;
     public bool oneTimePurchase = true;
 
-    [Header("Detection")]
     public string playerTag = "Player";
     public float activationDelay = 0.2f;
 
     private bool hasPurchased = false;
-    private Bank bank;
 
     private void Start()
     {
@@ -24,30 +21,32 @@ public class PressurePlatePurchase : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
-        if (oneTimePurchase && hasPurchased) return;
+        if (hasPurchased && oneTimePurchase) return;
 
-        // find bank on player
-        bank = other.GetComponentInParent<Bank>();
+        Debug.Log("Player triggered purchase plate.");
+
+        Bank bank = other.GetComponentInParent<Bank>();
+
         if (bank == null)
         {
-            Debug.LogError("No Bank component found on player!");
+            Debug.LogError("Bank NOT found on player!", other);
             return;
         }
 
-        StartCoroutine(ProcessPurchase());
+        StartCoroutine(ProcessPurchase(bank));
     }
 
-    private System.Collections.IEnumerator ProcessPurchase()
+    private System.Collections.IEnumerator ProcessPurchase(Bank bank)
     {
         yield return new WaitForSeconds(activationDelay);
 
         if (bank.Dinero >= cost)
         {
-            // Deduct money
-            bank.Dinero -= cost;
-            bank.SaveMoney(); // saves PlayerPrefs
+            Debug.Log("Purchase successful!");
 
-            // Unlock item
+            bank.Dinero -= cost;
+            bank.SaveMoney();
+
             if (itemToUnlock != null)
                 itemToUnlock.SetActive(true);
 
@@ -55,12 +54,10 @@ public class PressurePlatePurchase : MonoBehaviour
 
             if (destroyAfterPurchase)
                 Destroy(gameObject);
-
-            Debug.Log("Purchased for " + cost);
         }
         else
         {
-            Debug.Log("Not enough money!");
+            Debug.Log("Purchase failed — not enough money.");
         }
     }
 }
