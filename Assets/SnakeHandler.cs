@@ -1,14 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.AI;
-using System.Runtime.CompilerServices;
 using UnityEngine.AI;
 
 public class SnakeHandler : MonoBehaviour
 {
-    //removed the bits that relate to snakes going underground  it instead handles the game objects that are available
-    
+    // simplified snake spawner used lists instead of queues and removed the whole area spawn system
+    // it is a lot better than the previous version
     [Header("Prefab")]
     public GameObject snakePrefab;
 
@@ -17,345 +14,195 @@ public class SnakeHandler : MonoBehaviour
     public int maxAlive = 10;
     public float spawnInterval = 6f;
 
-    //Using points for spawning snakes
-    [Header("Spawn Location")]
-    public bool useSpawnPoints = false;
+    [Header("Spawn Points")]
     public Transform[] spawnPoints;
 
-    // Incase we are not using spawn points, define area
-    public Vector3 areaCenter;
-    public Vector3 areaSize = new Vector3(12, 0, 12);
-
-    [Header("Ground Settings")]
-    public bool projectToGround = true;
+    [Header("Optional: Ground Snap")]
+    public bool snapToGround = false;
     public LayerMask groundMask = ~0;
-    public float groundRayCastHeight = 3f;
-    public bool alignToSurface = false;
+    public float groundCheckDistance = 10f;
 
-    [Header("NavMesh")]
-    public bool requireNavMesh = true;
-    public float navMeshMaxDistance = 2f;
+    [Header("Optional: NavMesh")]
+    public bool requireNavMesh = false;
+    public float navMeshSearchDistance = 2f;
 
-    [Header("Separation")]
-    public float minSeparationDistance = 0.5f;
-    public float separationProbeRadius = 0.3f;
-    public LayerMask separationMask = ~0;
-
-    // this basically just handles the ammount of snakes loaded in memory
-    [Header("Pooling")]
-    public int preload = 0;
-    private readonly Queue<GameObject> _pool = new Queue<GameObject>();
-    private readonly Queue<GameObject> _alive = new Queue<GameObject>();
-    private float _spawnTimer = 0f;
-    
     [Header("References")]
-    // assign in inspector or leave empty to auto-find by tag at Start
     public Transform player;
 
-    // This validates the snake prefab then spawns a pool of said snakes it's done through a spawn timer 
+    private Queue<GameObject> _pool = new Queue<GameObject>();
+    private List<GameObject> _activeSnakes = new List<GameObject>();
+    private float _spawnTimer = 0f;
+
     void Start()
     {
+        // Validation for snake and spawn points 
         if (snakePrefab == null)
         {
-            Debug.LogError("SnakeSpawner: No snake prefab assigned.");
+            Debug.LogError("SnakeHandler: No snake prefab assigned!");
             return;
         }
-        if (player == null)
+
+        if (spawnPoints == null || spawnPoints.Length == 0)
         {
-            var pgo = GameObject.FindGameObjectWithTag("Player");
-            if (pgo != null) player = pgo.transform;
+            Debug.LogError("SnakeHandler: No spawn points assigned!");
+            return;
         }
 
-        PreLoadPool(Mathf.Max(preload, initialSpawn));
+        // Check for finding player if not assigned 
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null) player = playerObj.transform;
+        }
 
+        // Preload pool of snakes 
+        for (int i = 0; i < initialSpawn; i++)
+        {
+            CreatePooledSnake();
+        }
+
+        // Sets Initial spawn of snake
         for (int i = 0; i < initialSpawn; i++)
         {
             SpawnSnake();
         }
+
         _spawnTimer = spawnInterval;
-
-
-
     }
-    // this just removes the remaining snakes from queue memory and then attempts to spawn snake on set intervals
+
     void Update()
     {
-        //cleans up remaining snakes from queue memory re-wrote it a bit to be more simplified added method 
-        CleanAliveQueue();
+        // Clean up performance reasons
+        _activeSnakes.RemoveAll(s => s == null);
 
+        // Spawn timer
         _spawnTimer -= Time.deltaTime;
         if (_spawnTimer <= 0f)
         {
             _spawnTimer = spawnInterval;
-            SpawnSnake();
-
+            if (_activeSnakes.Count < maxAlive)
+            {
+                SpawnSnake();
+            }
         }
     }
-
-    private void PreLoadPool(int count)
+    // self explanatory it creates a snake to add in the pool
+    private GameObject CreatePooledSnake()
     {
-        for (int i = 0; i < count; i++)
+        GameObject snake = Instantiate(snakePrefab);
+
+        // Setup collecatable to check if it was collected and then added to the pool 
+        var collectable = snake.GetComponent<SnakeCollectable>();
+        if (collectable == null)
         {
-            GameObject go = Instantiate(snakePrefab);
-            go.GetComponent<AIControllerScript>().player = player;
-            go.SetActive(false);
-            _pool.Enqueue(go);
+            collectable = snake.AddComponent<SnakeCollectable>();
         }
+        collectable.Initialize(this);
+
+        // Setup ai to so it can work and target player 
+        var aiController = snake.GetComponent<AIControllerScript>();
+        if (aiController != null && player != null)
+        {
+            aiController.player = player;
+        }
+
+        snake.SetActive(false);
+        _pool.Enqueue(snake);
+        return snake;
     }
 
-    private GameObject GetFromPool()
+    private GameObject GetSnakeFromPool()
     {
         if (_pool.Count > 0)
         {
             return _pool.Dequeue();
         }
-        else
-        {
-            GameObject go = Instantiate(snakePrefab);
-            go.SetActive(false);
-            return go;
-        }
+        return CreatePooledSnake();
     }
 
-    private void ReturnToPool(GameObject go)
+    public void ReturnToPool(GameObject snake)
     {
-        if (!go) return;
-        go.SetActive(false);
-        // Remove the specific instance from _alive by rebuilding the queue without it
-        if (_alive.Count > 0 && _alive.Contains(go))
-        {
-            var keep = new List<GameObject>(_alive.Count);
-            foreach (var g in _alive)
-            {
-                if (!ReferenceEquals(g, go))
-                    keep.Add(g);
-            }
-            _alive.Clear();
-            foreach (var g in keep)
-                _alive.Enqueue(g);
-        }
-    
-    _pool.Enqueue(go);
+        if (snake == null) return;
+
+        snake.SetActive(false);
+        _activeSnakes.Remove(snake);
+        _pool.Enqueue(snake);
     }
-    // this calls the spawn position function and handles nav mesh agents and underground spawning 
-    public bool SpawnSnake()
+
+    private bool SpawnSnake()
     {
-        if (_alive.Count >= maxAlive) return false;
-        if (!FindSpawnPosition(out Vector3 pos, out Quaternion rot))
+        if (_activeSnakes.Count >= maxAlive)
+        {
             return false;
-
-        GameObject go = GetFromPool();
-        go.transform.SetPositionAndRotation(pos, rot);
-        go.SetActive(true);
-
-        _alive.Enqueue(go); //fixed
-
-        //resets NavMeshAgent if available 
-        NavMeshAgent agent = go.GetComponent<NavMeshAgent>();
-        if (agent != null && agent.enabled && agent.isOnNavMesh)
-        {
-            agent.Warp(pos);
         }
+
+        // Get random spawn point
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        if (spawnPoint == null)
+        {
+            Debug.LogWarning("SnakeHandler: Spawn point is null!");
+            return false;
+        }
+
+        Vector3 spawnPos = spawnPoint.position;
+        Quaternion spawnRot = spawnPoint.rotation;
+
+        // snaps to ground if needed
+        if (snapToGround)
+        {
+            if (Physics.Raycast(spawnPos + Vector3.up * groundCheckDistance, Vector3.down,
+                out RaycastHit hit, groundCheckDistance * 2f, groundMask))
+            {
+                spawnPos = hit.point;
+            }
+        }
+
+        // this is for adjusting the navmesh postion
+        if (requireNavMesh)
+        {
+            if (NavMesh.SamplePosition(spawnPos, out NavMeshHit navHit, navMeshSearchDistance, NavMesh.AllAreas))
+            {
+                spawnPos = navHit.position;
+            }
+            else
+            {
+                Debug.LogWarning($"SnakeHandler: No NavMesh found near {spawnPoint.name}");
+                return false;
+            }
+        }
+
+        // Gets snakes from pool and activates their position and rotation
+        GameObject snake = GetSnakeFromPool();
+        snake.transform.SetPositionAndRotation(spawnPos, spawnRot);
+        snake.SetActive(true);
+
+        // Reset NavMeshAgent if present
+        NavMeshAgent agent = snake.GetComponent<NavMeshAgent>();
+        if (agent != null && agent.enabled)
+        {
+            if (agent.isOnNavMesh)
+            {
+                agent.Warp(spawnPos);
+            }
+        }
+
+        _activeSnakes.Add(snake);
+        Debug.Log($"SnakeHandler: Spawned snake at {spawnPoint.name}. Active: {_activeSnakes.Count}/{maxAlive}");
         return true;
     }
 
-    private bool FindSpawnPosition(out Vector3 position, out Quaternion rotation)
+    void OnDrawGizmosSelected()
     {
-        // Base position
-        Vector3 basePos;
-        if (useSpawnPoints && spawnPoints != null && spawnPoints.Length > 0)
-        {
-            var t = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            basePos = t ? t.position : transform.position;
-        }
-        else
-        {
-            Vector3 half = areaSize * 0.5f;
-            Vector3 rndLocal = new Vector3(
-                Random.Range(-half.x, half.x),
-                0,
-                Random.Range(-half.z, half.z)
-            );
-            basePos = transform.TransformPoint(areaCenter + rndLocal);
-        }
+        if (spawnPoints == null) return;
 
-        Vector3 pos = basePos;
-        Vector3 up = Vector3.up;
-
-        // Projects to ground
-        if (projectToGround)
-        {
-            Vector3 rayOrgin = basePos + Vector3.up * groundRayCastHeight;
-            if (Physics.Raycast(rayOrgin, Vector3.down, out RaycastHit hit, groundRayCastHeight * 2f, groundMask))
-            {
-                pos = hit.point;
-                if (alignToSurface)
-                {
-                    up = hit.normal;
-                }
-            }
-            else
-            {
-                position = Vector3.zero;
-                rotation = Quaternion.identity;
-                return false;
-            }
-        }
-
-        //separation checking 
-        if (minSeparationDistance > 0f)
-        {
-            Collider[] colliders = Physics.OverlapSphere(pos, separationProbeRadius, separationMask);
-            foreach (var col in colliders)
-            {
-                if (Vector3.Distance(col.ClosestPoint(pos), pos) < minSeparationDistance)
-                {
-                    position = Vector3.zero;
-                    rotation = Quaternion.identity;
-                    return false;
-                }
-            }
-        }
-    //NavMesh stuff
-    if (requireNavMesh)
-        {
-            if (NavMesh.SamplePosition(pos, out NavMeshHit navHit, navMeshMaxDistance, NavMesh.AllAreas))
-            {
-                pos = navHit.position;
-            }
-            else
-            {
-                position = Vector3.zero;
-                rotation = Quaternion.identity;
-                return false;
-            }
-        }
-        // assigning parameters for FindSpawnPosition
-        position = pos;
-    rotation = alignToSurface
-        ? Quaternion.FromToRotation(Vector3.up, up) * Quaternion.Euler(0, Random.Range(0, 360f), 0)
-        : Quaternion.Euler(0, Random.Range(0, 360f), 0);
-    return true;
-    }
-
-    private void CleanAliveQueue()
-    {
-        if (_alive.Count == 0) return;
-        var keep = new List<GameObject>(_alive.Count);
-        foreach (var g in _alive)
-        {
-            if (g != null && g.activeInHierarchy)
-                keep.Add(g);
-        }
-        _alive.Clear();
-        foreach (var g in keep)
-            _alive.Enqueue(g);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
         Gizmos.color = Color.green;
-
-        if (useSpawnPoints && spawnPoints != null && spawnPoints.Length > 0)
+        foreach (Transform point in spawnPoints)
         {
-            foreach (Transform t in spawnPoints)
+            if (point != null)
             {
-                if (!t) continue;
-                Gizmos.DrawWireSphere(t.position, 0.3f);
+                Gizmos.DrawWireSphere(point.position, 0.5f);
+                Gizmos.DrawLine(point.position, point.position + point.forward * 1f);
             }
-        }
-        else
-        {
-            Gizmos.matrix = transform.localToWorldMatrix;
-            Gizmos.DrawWireCube(areaCenter + new Vector3(0, 0.01f, 0), new Vector3(areaSize.x, 0.02f, areaSize.z));
         }
     }
 }
-
-
-
-//helper class (unused)
-//public class SnakeBurrow : MonoBehaviour
-//{
-//    private SnakeSpawner _spawner;
-//    private Renderer[] _renderers;
-//    private Collider[] _colliders;
-//    private NavMeshAgent _agent;
-//    private float _groundY;
-//    private Coroutine _routine;
-
-//    public void Configure(SnakeSpawner spawner, Vector3 spawnPos)
-//    {
-//        _spawner = spawner;
-//        _groundY = spawnPos.y;
-//        _renderers = GetComponentsInChildren<Renderer>(true);
-//        _colliders = GetComponentsInChildren<Collider>(true);
-//        _agent = GetComponent<NavMeshAgent>();
-//    }
-
-//    public void BuryImmediate()
-//    {
-//        if (_spawner == null) return;
-
-//        // Move down to simulate underground
-//        Vector3 p = transform.position;
-//        p.y = _groundY + _spawner.undergroundYOffset;
-//        transform.position = p;
-
-//        SetVisible(false);
-//        SetCollidable(false);
-
-//        if (_routine != null) StopCoroutine(_routine);
-//        float delay = Random.Range(_spawner.unburrowDelayRange.x, _spawner.unburrowDelayRange.y);
-//        _routine = StartCoroutine(UnburrowAfter(delay));
-//    }
-
-//    public void AppearImmediate()
-//    {
-//        if (_spawner == null) return;
-
-//        Vector3 p = transform.position;
-//        p.y = _groundY; // back to surface
-//        transform.position = p;
-
-//        SetVisible(true);
-//        SetCollidable(true);
-
-//        if (_spawner.reburrowAfterUnburrow)
-//        {
-//            if (_routine != null) StopCoroutine(_routine);
-//            float delay = Random.Range(_spawner.reburrowDelayRange.x, _spawner.reburrowDelayRange.y);
-//            _routine = StartCoroutine(BurrowAfter(delay));
-//        }
-//    }
-
-//    private IEnumerator UnburrowAfter(float delay)
-//    {
-//        yield return new WaitForSeconds(delay);
-//        AppearImmediate();
-//    }
-
-//    private IEnumerator BurrowAfter(float delay)
-//    {
-//        yield return new WaitForSeconds(delay);
-//        BuryImmediate();
-//    }
-
-//    private void SetVisible(bool visible)
-//    {
-//        if (_renderers == null) return;
-//        foreach (var r in _renderers) if (r) r.enabled = visible;
-//    }
-
-//    private void SetCollidable(bool collidable)
-//    {
-//        if (_colliders != null)
-//            foreach (var c in _colliders) if (c) c.enabled = collidable;
-
-//        if (_agent != null)
-//        {
-//            // Keep agent on the NavMesh, just stop while burrowed
-//            _agent.isStopped = !collidable;
-//        }
-//    }
-// }

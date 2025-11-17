@@ -264,6 +264,7 @@ GameObject:
   - component: {fileID: 8566698358326050956}
   - component: {fileID: 7976701513709187039}
   - component: {fileID: 5341136049539995280}
+  - component: {fileID: 7030082760433344119}
   m_Layer: 0
   m_Name: Snake enemy
   m_TagString: Enemy
@@ -447,6 +448,18 @@ MonoBehaviour:
   amplitude: 0.06
   wavelength: 0.45
   waveSpeed: 1.2
+--- !u!114 &7030082760433344119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2739892544191724324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeabae6605310b24c9f8d528ee35a42b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2815295570619056122
 GameObject:
   m_ObjectHideFlags: 0
