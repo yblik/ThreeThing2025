@@ -21,6 +21,8 @@ public class AIControllerScript : MonoBehaviour
     public float patrolSpeed = 1.5f;
     public float playerSpeedThreshold = 3.0f;
 
+    public Animator snake;
+
     [Header("Patrol")]
     public Transform[] patrolPoints;
     private int patrolIndex = 0;
@@ -71,6 +73,9 @@ public class AIControllerScript : MonoBehaviour
     private bool isLunging = false;
     private bool isBurrowed = false;
 
+    //for object pool: snakeObject.GetComponent<AIControllerScript>().ResetOnSpawn();
+
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -88,6 +93,41 @@ public class AIControllerScript : MonoBehaviour
         targetRotation = transform.rotation;
         lastPlayerPos = player != null ? player.position : Vector3.zero;
         lastFramePos = transform.position;
+    }
+
+    public void ResetOnSpawn()
+    {
+        // reset AI core
+        currentState = AIState.Patrol;
+        targetBush = null;
+        hideTimer = 0f;
+        hideCooldownTimer = 2f;  // cannot hide instantly on spawn
+
+        attackCooldownTimer = 0f;
+        lungeTimer = 0f;
+        pathUpdateTimer = 0f;
+        isLunging = false;
+        isBurrowed = false;
+
+        // reset movement
+        if (agent != null)
+        {
+            agent.updatePosition = true;
+            agent.isStopped = false;
+
+            // Force re-enable if pooled object disabled agent accidentally
+            agent.enabled = true;
+        }
+
+        // make snake visible again (important!)
+        if (renderers != null)
+        {
+            foreach (var r in renderers)
+                r.enabled = true;
+        }
+
+        // play the emerge animation if you have one
+        BurrowOut();
     }
 
     private void Update()
@@ -485,6 +525,7 @@ public class AIControllerScript : MonoBehaviour
         isBurrowed = true;
         // TODO: animate burrow
         Debug.Log("Burrowing...");
+        snake.Play("BurrowIn");
     }
 
     void BurrowOut()
@@ -492,5 +533,6 @@ public class AIControllerScript : MonoBehaviour
         isBurrowed = false;
         // TODO: animate emerge
         Debug.Log("Emerging...");
+        snake.Play("BurrowOut");
     }
 }

@@ -380,16 +380,17 @@ MonoBehaviour:
   fleeSpeed: 5
   patrolSpeed: 1.5
   playerSpeedThreshold: 3
+  snake: {fileID: 5111051454280695718}
   patrolPoints: []
   patrolWaitTime: 2
   wallCheckDistance: 1
   edgeCheckDistance: 1.2
   groundMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   wallMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   hideDuration: 5
   hideCooldown: 5
   attackCooldown: 1.2
@@ -1472,6 +1473,7 @@ MonoBehaviour:
   fleeSpeed: 5
   patrolSpeed: 1.5
   playerSpeedThreshold: 3
+  snake: {fileID: 0}
   patrolPoints: []
   patrolWaitTime: 2
   wallCheckDistance: 1
