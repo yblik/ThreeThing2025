@@ -1,45 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public static SpawnManager Instance { get; private set; }
+    public static SpawnManager Instance;
 
-    [Header("Spawn Settings")]
-    [SerializeField] private int spawnIndex = 0; // Room index
-    [SerializeField] private int posIndex = 0;   // Position index
-    [SerializeField] private bool spawn = false; // True = respawn mode
+    public int spawnIndex = 0; // rooms
+    public int posIndex = 0; // positions
+
+    public bool spawn; // 0 = normal, 1 = spawn
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Debug.LogWarning("Duplicate SpawnManager detected. Destroying this instance.");
+            Instance = this;
+            SetPoint(1); //set to bed on game session
+            DontDestroyOnLoad(gameObject); // persists across scenes
+        }
+        else
+        {
             Destroy(gameObject);
-            return;
         }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-        SetPoint(1); // Default to bed on game session
     }
 
-    private void OnDestroy()
+    public void SetSpawnPoint(int index)
     {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
+        spawnIndex = index;
     }
 
-    // Room spawn index
-    public void SetSpawnPoint(int index) => spawnIndex = index;
-    public int GetSpawnPoint() => spawnIndex;
+    public int GetSpawnPoint()
+    {
+        return spawnIndex;
+    }
+    public void SetPoint(int index)
+    {
+        posIndex = index;
+    }
 
-    // Position index
-    public void SetPoint(int index) => posIndex = index;
-    public int GetPoint() => posIndex;
+    public int GetPoint()
+    {
+        return posIndex;
+    }
 
-    // Respawn flag
-    public void SetRespawn(bool value) => spawn = value;
-    public bool GetRespawnPoint() => spawn;
+    public void SetRespawn(bool set)
+    {
+        spawn = set;
+    }
+
+    public bool GetRespawnPoint()
+    {
+        return spawn;
+    }
 }

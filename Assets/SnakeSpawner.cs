@@ -8,6 +8,7 @@ using UnityEngine.AI;
 public class SnakeSpawner : MonoBehaviour
 {
     //class that spawns snakes and manages their positioning i.e., going underground or not it
+    public Transform player;
     // Unsure if this is fully correct or not and idk if we are using spawn points or just area spawning
     [Header("Prefab")]
     public GameObject snakePrefab;
@@ -100,6 +101,7 @@ public class SnakeSpawner : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var go = Instantiate(snakePrefab);
+            go.GetComponent<AIControllerScript>().player = player;
             go.SetActive(false);
             _pool.Enqueue(go);
         }
@@ -114,6 +116,7 @@ public class SnakeSpawner : MonoBehaviour
         else
         {
             var go = Instantiate(snakePrefab);
+            go.GetComponent<AIControllerScript>().player = player;
             go.SetActive(false);
             return go;
         }
