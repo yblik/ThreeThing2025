@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Hospital.unity
     guid: 10893ccc5c61e934891cafbe1984e404
   - enabled: 1
+    path: Assets/Scenes/Shop.unity
+    guid: c94621973acd34947a834a9a84a090bc
+  - enabled: 1
     path: Assets/Scenes/Casino.unity
     guid: ae7cf7979bc48fb4fad7ba927a4b29b7
   m_configObjects: {}
