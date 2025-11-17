@@ -5,7 +5,9 @@ public class PressurePlateVisual : MonoBehaviour
     [Header("References")]
     public Bank playerBank;
     public MeshRenderer plateRenderer;
-    public Transform plateTop; // object that visually moves down
+    public Transform plateTop;
+    private Transform objectToMove;
+    private Renderer objectRenderer;
 
     [Header("Plate Animation")]
     public float pressDistance = 0.05f;
@@ -17,7 +19,7 @@ public class PressurePlateVisual : MonoBehaviour
     public Color canAffordColor = Color.green;
     public Color cannotAffordColor = Color.red;
 
-    [Header("Cost (Same as Purchase Script)")]
+    [Header("Cost")]
     public int cost = 50;
 
     [Header("Detection")]
@@ -26,13 +28,16 @@ public class PressurePlateVisual : MonoBehaviour
 
     private void Start()
     {
-        if (plateRenderer == null)
-            plateRenderer = GetComponent<MeshRenderer>();
+        objectToMove = plateTop != null ? plateTop : transform;
 
-        originalTopPos = plateTop.localPosition;
+        plateRenderer = plateRenderer != null ? plateRenderer : GetComponent<MeshRenderer>();
+        objectRenderer = plateRenderer;
+
+        originalTopPos = objectToMove.localPosition;
 
         plateRenderer.material.color = defaultColor;
     }
+
 
     private void Update()
     {
@@ -57,28 +62,36 @@ public class PressurePlateVisual : MonoBehaviour
         if (playerIsOnPlate)
             targetPos = originalTopPos - new Vector3(0, pressDistance, 0);
 
-        plateTop.localPosition = Vector3.Lerp(
-            plateTop.localPosition,
+        objectToMove.localPosition = Vector3.Lerp(
+            objectToMove.localPosition,
             targetPos,
             Time.deltaTime * pressSpeed
         );
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(playerTag))
-        {
-            playerIsOnPlate = true;
+        if (!other.CompareTag(playerTag)) return;
 
-            // Assign bank reference if missing
+        Debug.Log("Player stepped on plate");
+
+        playerIsOnPlate = true;
+
+        if (playerBank == null)
+        {
+            playerBank = other.GetComponentInParent<Bank>();
             if (playerBank == null)
-                playerBank = other.GetComponentInParent<Bank>();
+                Debug.LogError("No Bank found on player!", other);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag(playerTag))
+        {
+            Debug.Log("Player left plate");
             playerIsOnPlate = false;
+        }
     }
 }

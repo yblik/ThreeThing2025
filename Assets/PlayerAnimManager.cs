@@ -24,7 +24,7 @@ public class PlayerAnimManager : MonoBehaviour
         {
             animator.SetBool("w", false);
         }
-        Debug.Log(isMoving);
+        //Debug.Log(isMoving);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
