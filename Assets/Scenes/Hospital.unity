@@ -4248,9 +4248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5a93dbc23451dc448f40f9b497f5b37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 782479814}
-  PC: {fileID: 1505296217}
-  Natwest: {fileID: 475865761}
   triggerDistance: 4
   depositedSnakes: 0
   maxDeposits: 20
