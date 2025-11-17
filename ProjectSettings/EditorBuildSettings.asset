@@ -6,15 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Tent.unity
+    path: Assets/Scenes/Tent.unity
     guid: d1fd1561881b7604ebb510191081b480
   - enabled: 1
-    path: Assets/Scene01.unity
+    path: Assets/Scenes/Scene01.unity
     guid: 94106f449253fbd4fa90fc37972b283e
   - enabled: 1
-    path: Assets/Hospital.unity
+    path: Assets/Scenes/Hospital.unity
     guid: 10893ccc5c61e934891cafbe1984e404
   - enabled: 1
-    path: Assets/Casino.unity
+    path: Assets/Scenes/Casino.unity
     guid: ae7cf7979bc48fb4fad7ba927a4b29b7
   m_configObjects: {}
