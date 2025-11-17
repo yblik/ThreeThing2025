@@ -3,7 +3,7 @@ using UnityEngine;
 public class ShopItemBuyer : MonoBehaviour
 {
     public ShopItem item;            // Assign your ShopItem asset here
-    public Bank bank;                // Reference to your Bank script
+    public Bank bank;                // Reference to Bank script
     public Transform spawnPoint;     // Where the item will appear
 
     public void TryBuy()
@@ -18,6 +18,11 @@ public class ShopItemBuyer : MonoBehaviour
             {
                 Instantiate(item.itemPrefab, spawnPoint.position + item.spawnOffset, Quaternion.identity);
             }
+
+            // for inventory system, you might want to add the item to the player's inventory here
+            //replace that instantiate line with inventory addition code here
+            //InventoryManager.Instance.AddItem(shopItem.item, 1);
+
 
             Debug.Log(item.itemName + " purchased!");
         }
