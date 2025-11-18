@@ -9,6 +9,10 @@ public class CatchReciever : MonoBehaviour
     public Health hp;
     public Animator TransitionOut;
 
+    public AudioSource JumpSFX;
+    public AudioSource RunSFX;
+    public AudioSource SwingSFX;
+
     public void StartMove()
     {
         if (!hp.Dead)
@@ -33,5 +37,22 @@ public class CatchReciever : MonoBehaviour
     public void EndCatch()
     {
         PC.StopCatching();
+    }
+
+    public void StartRun() 
+    { 
+        RunSFX.Play();
+    }
+    public void StoptRun()
+    {
+        RunSFX.Stop();
+    }
+    public void StartJump()
+    {
+        JumpSFX.Play();
+    }
+    public void StartSwing()
+    {
+        SwingSFX.Play();
     }
 }

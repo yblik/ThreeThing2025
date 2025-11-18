@@ -8,6 +8,8 @@ public class PlayerAnimManager : MonoBehaviour
     public Animator animator;
     public Rigidbody rb;
 
+
+
     private void Start()
     {
         //animator.SetBool("walk", true);
