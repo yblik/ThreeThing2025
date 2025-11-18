@@ -2789,6 +2789,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1401186839076330692}
   rb: {fileID: 2196504555057400674}
+  hitClip: {fileID: 8300000, guid: 19df04247ca24374c81130d49068113e, type: 3}
+  jumpClip: {fileID: 8300000, guid: 717e7469a4cc7b4408f20829825b8764, type: 3}
+  walkClip: {fileID: 8300000, guid: 20f5756d10eee7d4f9425c4a472995d2, type: 3}
+  soundVolume: 1
+  walkVolume: 0.5
+  walkFadeSpeed: 2
 --- !u!114 &1964725495505276398
 MonoBehaviour:
   m_ObjectHideFlags: 0

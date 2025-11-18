@@ -6,7 +6,6 @@ public class PlayerAnimManager : MonoBehaviour
     public Rigidbody rb;
 
     [Header("Audio")]
-    public AudioClip hitClip;
     public AudioClip jumpClip;
     public AudioClip walkClip;
     public float soundVolume = 1f;
@@ -58,8 +57,6 @@ public class PlayerAnimManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             animator.SetBool("s", true);
-            if (hitClip != null)
-                sfxAudioSource.PlayOneShot(hitClip, soundVolume);
         }
         else if (Input.GetMouseButtonUp(0))
         {
