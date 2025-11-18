@@ -6,6 +6,7 @@ public class objectPlacer : MonoBehaviour
     public Transform footPos;              // height reference
     public LayerMask surfaceMask;
     public float storerOffset = 0.2f;
+    public SnakeHandler snakeHandler;
 
     [Header("Placement Settings")]
     public float rotationSpeed = 90f;
@@ -283,6 +284,17 @@ public class objectPlacer : MonoBehaviour
             previewInstance.transform.position,
             previewInstance.transform.rotation
         );
+        if (currentItemType == 1)
+        {
+            if (snakeHandler.spawnInterval > 0)
+            {
+                snakeHandler.spawnInterval -= 0.5f;
+            }
+            else
+            {
+                print("tooo many - i aint adding this feature that people may see, I want to add black jack");
+            }
+        }
 
         // Reduce inventory count
         ReduceInventoryCount();
