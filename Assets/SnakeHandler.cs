@@ -15,6 +15,12 @@ public class SnakeHandler : MonoBehaviour
     [Header("Spawn Points")]
     public Transform[] spawnPoints;
 
+    [Header("Random Offset Settings")]
+    public float minOffset = 1f;
+    public float maxOffset = 3f;
+    public bool avoidOverlap = true;
+    public float minSnakeDistance = 2f;
+
     [Header("Optional: Ground Snap")]
     public bool snapToGround = false;
     public LayerMask groundMask = ~0;
@@ -26,13 +32,6 @@ public class SnakeHandler : MonoBehaviour
 
     [Header("References")]
     public Transform player;
-
-    //type shit boy
-
-    [Header("Random Spawn Offset")]
-    public float randomRadius = 2f;
-    public float randomVerticalOffset = 0.2f;
-
 
     private List<GameObject> _activeSnakes = new List<GameObject>();
     private float _spawnTimer = 0f;
@@ -70,17 +69,27 @@ public class SnakeHandler : MonoBehaviour
 
     void Update()
     {
-        // Clean up destroyed snakes
-        _activeSnakes.RemoveAll(s => s == null);
+        // PROPERLY clean up destroyed snakes
+        int nullCount = _activeSnakes.RemoveAll(s => s == null);
+        if (nullCount > 0)
+        {
+            Debug.Log($"Cleaned up {nullCount} destroyed snakes. Active: {_activeSnakes.Count}/{maxAlive}");
+        }
 
         // Spawn timer
         _spawnTimer -= Time.deltaTime;
         if (_spawnTimer <= 0f)
         {
             _spawnTimer = spawnInterval;
+
+            // This should now work correctly since list is cleaned
             if (_activeSnakes.Count < maxAlive)
             {
                 SpawnNewSnake();
+            }
+            else
+            {
+                Debug.Log($"Max alive reached: {_activeSnakes.Count}/{maxAlive} - waiting for snakes to be destroyed");
             }
         }
     }
@@ -92,76 +101,107 @@ public class SnakeHandler : MonoBehaviour
             return false;
         }
 
-        // Get random spawn point
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        if (spawnPoint == null)
+        // Try multiple spawn points to find a good position
+        for (int attempt = 0; attempt < spawnPoints.Length * 2; attempt++)
         {
-            Debug.LogWarning("SnakeHandler: Spawn point is null!");
-            return false;
+            // Get random spawn point
+            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            if (spawnPoint == null) continue;
+
+            Vector3 spawnPos = spawnPoint.position;
+            Quaternion spawnRot = spawnPoint.rotation;
+
+            // Apply random offset
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-maxOffset, maxOffset),
+                0f,
+                Random.Range(-maxOffset, maxOffset)
+            );
+
+            // Clamp to min/max offset range
+            if (randomOffset.magnitude < minOffset)
+            {
+                randomOffset = randomOffset.normalized * minOffset;
+            }
+            if (randomOffset.magnitude > maxOffset)
+            {
+                randomOffset = randomOffset.normalized * maxOffset;
+            }
+
+            spawnPos += randomOffset;
+
+            // Snap to ground if needed
+            if (snapToGround)
+            {
+                if (Physics.Raycast(spawnPos + Vector3.up * groundCheckDistance, Vector3.down,
+                    out RaycastHit hit, groundCheckDistance * 2f, groundMask))
+                {
+                    spawnPos = hit.point;
+                }
+            }
+
+            // Adjust for NavMesh
+            if (requireNavMesh)
+            {
+                if (NavMesh.SamplePosition(spawnPos, out NavMeshHit navHit, navMeshSearchDistance, NavMesh.AllAreas))
+                {
+                    spawnPos = navHit.position;
+                }
+                else
+                {
+                    continue; // Try another position if no NavMesh here
+                }
+            }
+
+            // Check if this position is too close to other snakes
+            if (avoidOverlap && IsTooCloseToOtherSnakes(spawnPos))
+            {
+                continue; // Try another position
+            }
+
+            // INSTANTIATE NEW SNAKE (no pooling)
+            GameObject snake = Instantiate(snakePrefab, spawnPos, spawnRot);
+
+            // Setup AI controller
+            var aiController = snake.GetComponent<AIControllerScript>();
+            if (aiController != null && player != null)
+            {
+                aiController.player = player;
+                aiController.SA.player = player;
+                aiController.ResetOnSpawn();
+            }
+
+            // Remove or modify the SnakeCollectable component since we're not pooling
+            var collectable = snake.GetComponent<SnakeCollectable>();
+            if (collectable != null)
+            {
+                Destroy(collectable);
+            }
+
+            _activeSnakes.Add(snake);
+            Debug.Log($"SnakeHandler: Spawned NEW snake at {spawnPoint.name} with offset. Active: {_activeSnakes.Count}/{maxAlive}");
+            return true;
         }
 
-        Vector3 spawnPos = spawnPoint.position;
+        Debug.LogWarning("SnakeHandler: Could not find valid spawn position after multiple attempts!");
+        return false;
+    }
 
-        // 2d offset tpye shit
-        Vector2 offset = Random.insideUnitCircle * randomRadius;
-        spawnPos += new Vector3(offset.x, 0f, offset.y);
-
-        // vertical offset in case
-        spawnPos.y += randomVerticalOffset;
-
-        Quaternion spawnRot = spawnPoint.rotation;
-
-        // Snap to ground if needed
-        if (snapToGround)
+    // Check if position is too close to other snakes
+    private bool IsTooCloseToOtherSnakes(Vector3 position)
+    {
+        foreach (GameObject snake in _activeSnakes)
         {
-            if (Physics.Raycast(spawnPos + Vector3.up * groundCheckDistance, Vector3.down,
-                out RaycastHit hit, groundCheckDistance * 2f, groundMask))
+            if (snake != null)
             {
-                spawnPos = hit.point;
+                float distance = Vector3.Distance(position, snake.transform.position);
+                if (distance < minSnakeDistance)
+                {
+                    return true; // Too close to another snake
+                }
             }
         }
-
-        // Adjust for NavMesh
-        if (requireNavMesh)
-        {
-            if (NavMesh.SamplePosition(spawnPos, out NavMeshHit navHit, navMeshSearchDistance, NavMesh.AllAreas))
-            {
-                spawnPos = navHit.position;
-            }
-            else
-            {
-                Debug.LogWarning($"SnakeHandler: No NavMesh found near {spawnPoint.name}");
-                return false;
-            }
-        }
-
-        // INSTANTIATE NEW SNAKE (no pooling)
-        GameObject snake = Instantiate(snakePrefab, spawnPos, spawnRot);
-
-        // Setup AI controller
-        var aiController = snake.GetComponent<AIControllerScript>();
-        if (aiController != null && player != null)
-        {
-            aiController.player = player;
-            aiController.SA.player = player;
-            aiController.ResetOnSpawn();
-        }
-
-        // Remove or modify the SnakeCollectable component since we're not pooling
-        var collectable = snake.GetComponent<SnakeCollectable>();
-        if (collectable != null)
-        {
-            // Either destroy it or modify it to destroy the snake instead of returning to pool
-            Destroy(collectable);
-
-            // Alternative: Replace with simple destroy-on-collect behavior
-            // var newCollectable = snake.AddComponent<SimpleDestroyCollectable>();
-            // newCollectable.Initialize(this);
-        }
-
-        _activeSnakes.Add(snake);
-        Debug.Log($"SnakeHandler: Spawned NEW snake at {spawnPoint.name}. Active: {_activeSnakes.Count}/{maxAlive}");
-        return true;
+        return false;
     }
 
     // Optional: Method to manually remove/destroy a snake
@@ -185,6 +225,12 @@ public class SnakeHandler : MonoBehaviour
             {
                 Gizmos.DrawWireSphere(point.position, 0.5f);
                 Gizmos.DrawLine(point.position, point.position + point.forward * 1f);
+
+                // Draw offset range visualization
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(point.position, minOffset);
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(point.position, maxOffset);
             }
         }
     }
