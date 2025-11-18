@@ -204,16 +204,6 @@ public class SnakeHandler : MonoBehaviour
         return false;
     }
 
-    // Optional: Method to manually remove/destroy a snake
-    public void RemoveSnake(GameObject snake)
-    {
-        if (snake != null)
-        {
-            _activeSnakes.Remove(snake);
-            Destroy(snake);
-        }
-    }
-
     void OnDrawGizmosSelected()
     {
         if (spawnPoints == null) return;
