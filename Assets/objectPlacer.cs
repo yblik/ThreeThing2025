@@ -15,20 +15,36 @@ public class objectPlacer : MonoBehaviour
     public float elevationStep = 0.02f;
     public float maxElevation = 1f;
 
+    [Header("Inventory Reference")]
+    public Inventory inventory; // Assign your Inventory component here
+
+    [Header("Item Prefabs")]
+    public GameObject storagePrefab;    // For key 1
+    public GameObject increaserPrefab;  // For key 2  
+    public GameObject trapPrefab;       // For key 3
+
     private bool placing = false;
     private GameObject previewInstance;
     private BoxCollider previewBounds;
     private float currentRotation = 0f;
 
-    private InventoryItem selectedItem; // The selected item from inventory
-    private InventorySlot selectedSlot; // The actual slot (to reduce amount)
+    // Track which item type we're placing (0=storage, 1=increaser, 2=trap)
+    private int currentItemType = -1;
+    private GameObject currentPrefab;
 
+    bool HasAnyInventoryItems()
+    {
+        return inventory.storage > 0 || inventory.increasers > 0 || inventory.traps > 0;
+    }
     void Update()
     {
-        // Toggle placement mode
+        // Keyboard number key selection
+        HandleKeyboardSelection();
+
+        // Toggle placement mode with Q (existing functionality)
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (!placing) StartPlacementMode();
+            if (!placing && HasAnyInventoryItems()) StartPlacementMode();
             else CancelPlacement();
         }
 
@@ -41,17 +57,59 @@ public class objectPlacer : MonoBehaviour
     }
 
     // ---------------------------------------------------------------
-    // SELECT ITEM FROM INVENTORY (CALLED BY UI OR SCROLL SYSTEM)
+    // KEYBOARD NUMBER KEY SELECTION (NEW)
     // ---------------------------------------------------------------
-    public void SelectInventoryItem(InventorySlot slot)
+    void HandleKeyboardSelection()
     {
-        selectedSlot = slot;
-        selectedItem = slot?.item;
-
-        if (placing)
+        // Key 1 - Storage
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Destroy(previewInstance);
-            StartPlacementMode();
+            if (inventory.storage > 0)
+            {
+                currentItemType = 0;
+                currentPrefab = storagePrefab;
+                if (placing) CancelPlacement();
+                StartPlacementMode();
+            }
+            else
+            {
+                Debug.Log("No storage items available!");
+                if (placing) CancelPlacement();
+            }
+        }
+
+        // Key 2 - Increasers
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            if (inventory.increasers > 0)
+            {
+                currentItemType = 1;
+                currentPrefab = increaserPrefab;
+                if (placing) CancelPlacement();
+                StartPlacementMode();
+            }
+            else
+            {
+                Debug.Log("No increaser items available!");
+                if (placing) CancelPlacement();
+            }
+        }
+
+        // Key 3 - Traps
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            if (inventory.traps > 0)
+            {
+                currentItemType = 2;
+                currentPrefab = trapPrefab;
+                if (placing) CancelPlacement();
+                StartPlacementMode();
+            }
+            else
+            {
+                Debug.Log("No trap items available!");
+                if (placing) CancelPlacement();
+            }
         }
     }
 
@@ -60,13 +118,14 @@ public class objectPlacer : MonoBehaviour
     // ---------------------------------------------------------------
     void StartPlacementMode()
     {
-        if (selectedItem == null)
+        if (currentPrefab == null)
         {
-            Debug.Log("No inventory item selected.");
+            Debug.Log("No item prefab selected.");
             return;
         }
 
-        if (selectedSlot.amount <= 0)
+        // Check if player has the item
+        if (!HasItemAvailable())
         {
             Debug.Log("Item out of stock.");
             return;
@@ -75,7 +134,7 @@ public class objectPlacer : MonoBehaviour
         placing = true;
 
         // Build preview automatically
-        previewInstance = Instantiate(selectedItem.worldPrefab);
+        previewInstance = Instantiate(currentPrefab);
         previewBounds = previewInstance.GetComponentInChildren<BoxCollider>();
 
         // Disable real physics for preview
@@ -91,6 +150,7 @@ public class objectPlacer : MonoBehaviour
     void CancelPlacement()
     {
         placing = false;
+        currentItemType = -1;
         if (previewInstance != null)
             Destroy(previewInstance);
     }
@@ -120,7 +180,7 @@ public class objectPlacer : MonoBehaviour
         Vector3 pos = new Vector3(hit.point.x, footY, hit.point.z);
 
         // Optional extra offset
-        if (selectedItem.itemName.ToLower().Contains("storer"))
+        if (currentItemType == 0) // Storage
             pos += Vector3.up * storerOffset;
 
         // Apply normal alignment + your rotation
@@ -184,15 +244,47 @@ public class objectPlacer : MonoBehaviour
 
         // World object
         GameObject placed = Instantiate(
-            selectedItem.worldPrefab,
+            currentPrefab,
             previewInstance.transform.position,
             previewInstance.transform.rotation
         );
 
-        // Inventory reduces by 1
-        InventoryManager.Instance.RemoveItem(selectedItem, 1);
+        // Reduce inventory count
+        ReduceInventoryCount();
 
         return true;
+    }
+
+    // ---------------------------------------------------------------
+    // INVENTORY HELPERS
+    // ---------------------------------------------------------------
+    bool HasItemAvailable()
+    {
+        switch (currentItemType)
+        {
+            case 0: return inventory.storage > 0;
+            case 1: return inventory.increasers > 0;
+            case 2: return inventory.traps > 0;
+            default: return false;
+        }
+    }
+
+    void ReduceInventoryCount()
+    {
+        switch (currentItemType)
+        {
+            case 0:
+                inventory.storage--;
+                break;
+            case 1:
+                inventory.increasers--;
+                break;
+            case 2:
+                inventory.traps--;
+                break;
+        }
+        inventory.SaveInventory();
+        Debug.Log($"Placed item. Remaining - Storage: {inventory.storage}, Increasers: {inventory.increasers}, Traps: {inventory.traps}");
     }
 
     // ---------------------------------------------------------------
