@@ -12,16 +12,8 @@ public class SnakeCollectable : MonoBehaviour
 
     //following method is called when the snake is collected
     public void Collect()
-    {
-        if (_handler != null)
-        {
-            _handler.ReturnToPool(gameObject);
-        }
-        else
-        {
-            //if statement doesn't work then just destroy the game object
+    {//if statement doesn't work then just destroy the game object
             Destroy(gameObject);
-        }
     
     }
     //checks for collision if it's player

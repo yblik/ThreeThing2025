@@ -4,8 +4,6 @@ using UnityEngine.AI;
 
 public class SnakeHandler : MonoBehaviour
 {
-    // simplified snake spawner used lists instead of queues and removed the whole area spawn system
-    // it is a lot better than the previous version
     [Header("Prefab")]
     public GameObject snakePrefab;
 
@@ -29,13 +27,12 @@ public class SnakeHandler : MonoBehaviour
     [Header("References")]
     public Transform player;
 
-    private Queue<GameObject> _pool = new Queue<GameObject>();
     private List<GameObject> _activeSnakes = new List<GameObject>();
     private float _spawnTimer = 0f;
 
     void Start()
     {
-        // Validation for snake and spawn points 
+        // Validation
         if (snakePrefab == null)
         {
             Debug.LogError("SnakeHandler: No snake prefab assigned!");
@@ -48,23 +45,17 @@ public class SnakeHandler : MonoBehaviour
             return;
         }
 
-        // Check for finding player if not assigned 
+        // Find player if not assigned
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null) player = playerObj.transform;
         }
 
-        // Preload pool of snakes 
+        // Initial spawn
         for (int i = 0; i < initialSpawn; i++)
         {
-            CreatePooledSnake();
-        }
-
-        // Sets Initial spawn of snake
-        for (int i = 0; i < initialSpawn; i++)
-        {
-            SpawnSnake();
+            SpawnNewSnake();
         }
 
         _spawnTimer = spawnInterval;
@@ -72,7 +63,7 @@ public class SnakeHandler : MonoBehaviour
 
     void Update()
     {
-        // Clean up performance reasons
+        // Clean up destroyed snakes
         _activeSnakes.RemoveAll(s => s == null);
 
         // Spawn timer
@@ -82,56 +73,12 @@ public class SnakeHandler : MonoBehaviour
             _spawnTimer = spawnInterval;
             if (_activeSnakes.Count < maxAlive)
             {
-                SpawnSnake();
+                SpawnNewSnake();
             }
         }
     }
-    // self explanatory it creates a snake to add in the pool
-    private GameObject CreatePooledSnake()
-    {
-        GameObject snake = Instantiate(snakePrefab);
 
-        // Setup collecatable to check if it was collected and then added to the pool 
-        var collectable = snake.GetComponent<SnakeCollectable>();
-        if (collectable == null)
-        {
-            collectable = snake.AddComponent<SnakeCollectable>();
-        }
-        collectable.Initialize(this);
-
-        // Setup ai to so it can work and target player 
-        var aiController = snake.GetComponent<AIControllerScript>();
-        if (aiController != null && player != null)
-        {
-            aiController.ResetOnSpawn();
-            aiController.player = player;
-        }
-
-
-        snake.SetActive(false);
-        _pool.Enqueue(snake);
-        return snake;
-    }
-
-    private GameObject GetSnakeFromPool()
-    {
-        if (_pool.Count > 0)
-        {
-            return _pool.Dequeue();
-        }
-        return CreatePooledSnake();
-    }
-
-    public void ReturnToPool(GameObject snake)
-    {
-        if (snake == null) return;
-
-        snake.SetActive(false);
-        _activeSnakes.Remove(snake);
-        _pool.Enqueue(snake);
-    }
-
-    private bool SpawnSnake()
+    private bool SpawnNewSnake()
     {
         if (_activeSnakes.Count >= maxAlive)
         {
@@ -149,7 +96,7 @@ public class SnakeHandler : MonoBehaviour
         Vector3 spawnPos = spawnPoint.position;
         Quaternion spawnRot = spawnPoint.rotation;
 
-        // snaps to ground if needed
+        // Snap to ground if needed
         if (snapToGround)
         {
             if (Physics.Raycast(spawnPos + Vector3.up * groundCheckDistance, Vector3.down,
@@ -159,7 +106,7 @@ public class SnakeHandler : MonoBehaviour
             }
         }
 
-        // this is for adjusting the navmesh postion
+        // Adjust for NavMesh
         if (requireNavMesh)
         {
             if (NavMesh.SamplePosition(spawnPos, out NavMeshHit navHit, navMeshSearchDistance, NavMesh.AllAreas))
@@ -173,24 +120,43 @@ public class SnakeHandler : MonoBehaviour
             }
         }
 
-        // Gets snakes from pool and activates their position and rotation
-        GameObject snake = GetSnakeFromPool();
-        snake.transform.SetPositionAndRotation(spawnPos, spawnRot);
-        snake.SetActive(true);
+        // INSTANTIATE NEW SNAKE (no pooling)
+        GameObject snake = Instantiate(snakePrefab, spawnPos, spawnRot);
 
-        // Reset NavMeshAgent if present
-        NavMeshAgent agent = snake.GetComponent<NavMeshAgent>();
-        if (agent != null && agent.enabled)
+        // Setup AI controller
+        var aiController = snake.GetComponent<AIControllerScript>();
+        if (aiController != null && player != null)
         {
-            if (agent.isOnNavMesh)
-            {
-                agent.Warp(spawnPos);
-            }
+            aiController.player = player;
+            aiController.SA.player = player;
+            aiController.ResetOnSpawn();
+        }
+
+        // Remove or modify the SnakeCollectable component since we're not pooling
+        var collectable = snake.GetComponent<SnakeCollectable>();
+        if (collectable != null)
+        {
+            // Either destroy it or modify it to destroy the snake instead of returning to pool
+            Destroy(collectable);
+
+            // Alternative: Replace with simple destroy-on-collect behavior
+            // var newCollectable = snake.AddComponent<SimpleDestroyCollectable>();
+            // newCollectable.Initialize(this);
         }
 
         _activeSnakes.Add(snake);
-        Debug.Log($"SnakeHandler: Spawned snake at {spawnPoint.name}. Active: {_activeSnakes.Count}/{maxAlive}");
+        Debug.Log($"SnakeHandler: Spawned NEW snake at {spawnPoint.name}. Active: {_activeSnakes.Count}/{maxAlive}");
         return true;
+    }
+
+    // Optional: Method to manually remove/destroy a snake
+    public void RemoveSnake(GameObject snake)
+    {
+        if (snake != null)
+        {
+            _activeSnakes.Remove(snake);
+            Destroy(snake);
+        }
     }
 
     void OnDrawGizmosSelected()

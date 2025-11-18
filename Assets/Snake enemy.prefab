@@ -410,6 +410,7 @@ GameObject:
   - component: {fileID: 7976701513709187039}
   - component: {fileID: 5341136049539995280}
   - component: {fileID: 7030082760433344119}
+  - component: {fileID: 7299762034628269062}
   m_Layer: 0
   m_Name: Snake enemy
   m_TagString: Enemy
@@ -519,6 +520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  SA: {fileID: 7299762034628269062}
   currentState: 0
   detectionRange: 50
   attackRange: 3
@@ -624,6 +626,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeabae6605310b24c9f8d528ee35a42b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7299762034628269062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2739892544191724324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c4d0b41944dd6479f51803f74f4d58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 1.4
+  attackCooldown: 1.2
+  damage: 1
+  rayRadius: 0.25
+  head: {fileID: 3711681856969830262}
+  player: {fileID: 0}
 --- !u!1 &2815295570619056122
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +671,7 @@ Transform:
   m_GameObject: {fileID: 2815295570619056122}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.214, y: 0, z: 1.193}
+  m_LocalPosition: {x: 0.214, y: 0, z: 1.024}
   m_LocalScale: {x: 0.47851, y: 0.47851, z: 1.0144411}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1845,6 +1865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  SA: {fileID: 0}
   currentState: 0
   detectionRange: 15
   attackRange: 3

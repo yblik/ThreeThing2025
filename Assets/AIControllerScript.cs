@@ -9,6 +9,7 @@ public class AIControllerScript : MonoBehaviour
     [Header("References")]
     public Transform player;
     private NavMeshAgent agent;
+    public SnakeAttack SA;
 
     [Header("AI Settings")]
     public AIState currentState = AIState.Patrol;
@@ -115,36 +116,62 @@ public class AIControllerScript : MonoBehaviour
 
     public void ResetOnSpawn()
     {
-        // reset AI core
-        if (snake != null) snake.enabled = true;
-        currentState = AIState.Patrol;
-        
-        hideTimer = 0f;
-        hideCooldownTimer = 2f;  // cannot hide instantly on spawn
+        // Stop any running coroutines
+        StopAllCoroutines();
 
+        // Reset AI state completely
+        currentState = AIState.Patrol;
+
+        // Reset all timers and flags
+        hideTimer = 0f;
+        hideCooldownTimer = 2f;
         attackCooldownTimer = 0f;
         lungeTimer = 0f;
         pathUpdateTimer = 0f;
         isLunging = false;
         isBurrowed = false;
+        stuckTimer = 0f;
 
-        // reset movement
+        // Reset NavMeshAgent completely
         if (agent != null)
         {
-            agent.updatePosition = true;
-            agent.isStopped = false;
-
-            // Force re-enable if pooled object disabled agent accidentally
+            // Ensure agent is enabled and on NavMesh
             agent.enabled = true;
+
+            // Clear any existing path/destination
+            agent.ResetPath();
+            agent.isStopped = false;
+            agent.updatePosition = true;
+            agent.updateRotation = false; // Keep manual rotation
+
+            // Reset agent properties to defaults
+            agent.speed = patrolSpeed;
+            agent.stoppingDistance = stoppingDistance;
+            agent.autoBraking = false;
+            agent.autoRepath = true;
         }
+
+        // Reset animator
+        if (snake != null)
+        {
+            snake.enabled = true;
+            snake.Rebind(); // Reset all animations to initial state
+        }
+
+        // Re-enable collider if it was disabled
+        if (snakeCollider != null)
+            snakeCollider.enabled = true;
+
+        // Reset state check timer
         stateCheckTimer = Random.Range(minStateCheckInterval, maxStateCheckInterval);
 
+        // Reset hide timer
+        nextHideTime = Time.timeSinceLevelLoad + Random.Range(10f, 20f);
 
-        // play the emerge animation if you have one
+        // Play emerge animation
         BurrowOut();
 
-        // set new random hide timer
-        nextHideTime = Random.Range(10f, 20f);
+        Debug.Log($"Snake Reset - State: {currentState}, AgentEnabled: {agent != null && agent.enabled}");
     }
 
     private void Update()
