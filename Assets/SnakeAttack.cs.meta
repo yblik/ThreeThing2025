@@ -3,7 +3,11 @@ guid: 20c4d0b41944dd6479f51803f74f4d58
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - head: {instanceID: 0}
+  - player: {instanceID: 0}
+  - ouchhitClip: {fileID: 8300000, guid: d6fbc806b4458f64d929ead7b4e46da9, type: 3}
+  - biteClip: {fileID: 8300000, guid: d1c51e2a986783843983caa18e05d83c, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
