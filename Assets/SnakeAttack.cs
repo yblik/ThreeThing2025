@@ -14,6 +14,11 @@ public class SnakeAttack : MonoBehaviour
     public Transform head;                 // snake head/mouth position
     public Transform player;               // PLAYER transform (no LayerMask now)
 
+    [Header("Audio")]
+    public AudioClip ouchhitClip;
+    public AudioClip biteClip;
+    public float soundVolume = 1f;
+
     private Health playerHealth;
     private float attackTimer;
 
@@ -63,8 +68,27 @@ public class SnakeAttack : MonoBehaviour
                 playerHealth.TakeDamage(damage);
                 attackTimer = 0f;
 
+                // Play sounds
+                PlaySound(biteClip);
+                PlaySound(ouchhitClip);
+
                 Debug.Log("Snake bit the player!");
             }
         }
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+
+        GameObject audioObj = new GameObject("Audio");
+        AudioSource source = audioObj.AddComponent<AudioSource>();
+
+        source.clip = clip;
+        source.volume = soundVolume;
+        source.spatialBlend = 0f; // 2D sound
+        source.Play();
+
+        Destroy(audioObj, clip.length);
     }
 }
