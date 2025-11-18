@@ -19,8 +19,10 @@ public class Inventory : MonoBehaviour
 
     public void SaveInventory() 
     {
+        print("should save");
         PlayerPrefs.SetInt("item0", storage);
         PlayerPrefs.SetInt("item1", increasers);
         PlayerPrefs.SetInt("item2", traps);
+
     }
 }

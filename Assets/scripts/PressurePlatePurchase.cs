@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class PressurePlatePurchase : MonoBehaviour
@@ -9,6 +10,10 @@ public class PressurePlatePurchase : MonoBehaviour
 
     public string playerTag = "Player";
     public float activationDelay = 0.2f;
+
+    public Inventory inventory;
+
+    public int Type;
 
     private bool hasPurchased = false;
     public Bank b;
@@ -45,7 +50,20 @@ public class PressurePlatePurchase : MonoBehaviour
             Debug.Log("Purchase successful!");
 
             b.Dinero -= cost;
-            b.SaveMoney();
+            switch (Type)
+            {
+                case 0:
+                    inventory.storage++;
+                    break;
+                case 1:
+                    inventory.increasers++;
+                    break;
+                case 2:
+                    inventory.traps++;
+                    break;
+            }
+
+            inventory.SaveInventory();
 
             //if (itemToUnlock != null)
             //    itemToUnlock.SetActive(true);

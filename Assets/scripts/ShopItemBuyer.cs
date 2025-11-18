@@ -12,24 +12,24 @@ public class ShopItemBuyer : MonoBehaviour
     {
         if (bank.Dinero >= item.cost)
         {
-            bank.Dinero -= item.cost;
-            bank.SaveMoney();
-
-            switch (type)
+            if (type == 0)
             {
-                case 0:
-                    inventory.storage++;
-                    break;
-                case 1:
-                    inventory.increasers++;
-                    break;
-                case 2:
-                    inventory.traps++; 
-                    break; 
-
+                inventory.storage++;
+            }
+            if (type == 1)
+            {
+                inventory.increasers++;
+            }
+            if (type == 2)
+            {
+                inventory.traps++;
             }
             inventory.SaveInventory();
 
+            bank.Dinero -= item.cost;
+            bank.SaveMoney();
+
+           
             // for inventory system, you might want to add the item to the player's inventory here
             //replace that instantiate line with inventory addition code here
             //InventoryManager.Instance.AddItem(shopItem.item, 1);
