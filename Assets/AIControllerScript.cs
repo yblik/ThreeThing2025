@@ -51,6 +51,9 @@ public class AIControllerScript : MonoBehaviour
     private bool isLunging = false;
     public bool isBurrowed = false;
 
+    // ADD BACK STATE CHECK TIMER
+    private float stateCheckTimer = 0.5f;
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -82,6 +85,9 @@ public class AIControllerScript : MonoBehaviour
         // RESET DISAPPEAR TIMER
         disappearTimer = timeBeforeDisappear;
 
+        // RESET STATE CHECK TIMER
+        stateCheckTimer = 0.5f;
+
         if (agent != null)
         {
             agent.enabled = true;
@@ -91,6 +97,9 @@ public class AIControllerScript : MonoBehaviour
             agent.updateRotation = false;
             agent.speed = patrolSpeed;
             agent.stoppingDistance = stoppingDistance;
+
+            // IMMEDIATELY SET A PATROL DESTINATION ON SPAWN
+            SetRandomDestination();
         }
 
         if (snake != null)
@@ -101,6 +110,23 @@ public class AIControllerScript : MonoBehaviour
 
         if (snakeCollider != null)
             snakeCollider.enabled = true;
+        BurrowOut();
+    }
+
+    void SetRandomDestination()
+    {
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            int randomIndex = Random.Range(0, patrolPoints.Length);
+            agent.SetDestination(patrolPoints[randomIndex].position);
+        }
+        else
+        {
+            // Random wander point
+            Vector3 rnd = Random.insideUnitSphere * 3f + transform.position;
+            if (NavMesh.SamplePosition(rnd, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+                agent.SetDestination(hit.position);
+        }
     }
 
     private void Update()
@@ -117,19 +143,12 @@ public class AIControllerScript : MonoBehaviour
             return;
         }
 
-        // Simple state check
-        if (player != null)
+        // STATE CHECK WITH TIMER (FIXES FREEZING)
+        stateCheckTimer -= Time.deltaTime;
+        if (stateCheckTimer <= 0f)
         {
-            float dist = Vector3.Distance(transform.position, player.position);
-
-            if (dist < detectionRange && aggressive)
-            {
-                currentState = AIState.Aggro;
-            }
-            else if (wanderer)
-            {
-                currentState = AIState.Patrol;
-            }
+            CheckStateTransitions();
+            stateCheckTimer = 0.5f; // Check every 0.5 seconds
         }
 
         switch (currentState)
@@ -140,6 +159,22 @@ public class AIControllerScript : MonoBehaviour
         }
 
         SmoothRotateWithMovement();
+    }
+
+    void CheckStateTransitions()
+    {
+        if (player == null) return;
+
+        float dist = Vector3.Distance(transform.position, player.position);
+
+        if (dist < detectionRange && aggressive && currentState != AIState.Attack)
+        {
+            currentState = AIState.Aggro;
+        }
+        else if (currentState != AIState.Attack) // Don't interrupt attack
+        {
+            currentState = AIState.Patrol;
+        }
     }
 
     void Patrol()
@@ -213,22 +248,23 @@ public class AIControllerScript : MonoBehaviour
 
         if (lungeTimer > 0f)
         {
-            Vector3 dir = (player.position - transform.position);
+            // Lunge toward player
+            Vector3 dir = (player.position - transform.position).normalized;
             dir.y = 0;
-            if (dir.sqrMagnitude > 0.001f)
-            {
-                dir.Normalize();
-                transform.position += dir * attackSpeedMultiplier * Time.deltaTime;
-            }
+            transform.position += dir * attackSpeedMultiplier * Time.deltaTime;
             return;
         }
 
+        // ATTACK FINISHED - GO BACK TO CHASING
         isLunging = false;
         agent.updatePosition = true;
         agent.isStopped = false;
 
-        StartCoroutine(BackOffRoutine());
+        // IMMEDIATELY GO BACK TO AGGRO STATE, NOT PATROL
+        currentState = AIState.Aggro;
     }
+
+    // REMOVE THE BackOffRoutine COROUTINE COMPLETELY - IT'S CAUSING ISSUES
 
     IEnumerator BackOffRoutine()
     {
