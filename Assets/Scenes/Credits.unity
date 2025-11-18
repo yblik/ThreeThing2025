@@ -771,7 +771,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 8, y: 150.41666}
+  m_AnchoredPosition: {x: 8, y: 235.4}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1904999543
@@ -795,9 +795,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "CREDITS\n\nTEAM: BEAUTIFUL SYNTAX\n\nThe catcher of the vipers: \nAn Edmund
-    Fitzgerald tribute\n\nLead programmers: Ben Kilby, Maksims Anisjko\nJunior programmers:
-    Adrian Velicu\nUI/UX: Adrian Velicu\nSnake Model: Adrian Velcu \n\n\"Edmund Fitzgerald\"
-    Ocean Liner model: \nTitanic by LEDEGENERE [CC-BY] via Poly Pizza\n\nThank you
+    Fitzgerald tribute\n\nLead programmers: Ben Kilby, Maksims Anisjko\nJunior programmer:
+    Adrian Velicu\nUI/UX: Adrian Velicu \n\n\"Edmund Fitzgerald\" Ocean Liner model:
+    \nTitanic by LEDEGENERE [CC-BY] via Poly Pizza\n\nMusic: Capri Serenade, The
+    Wreck of the Edmund Fitzgerald, Aurora, Dance of the free man, La stanza del
+    figilio, Moonlight Reflections, prelude of the afternoon of a faun\n\nThank you
     so much for playing my game - Mario Mario \n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -825,8 +827,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
