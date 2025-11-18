@@ -549,7 +549,7 @@ public class AIControllerScript : MonoBehaviour
     void BurrowIn()
     {
         if (!snake.enabled) snake.enabled = true;
-        snake.Play("BurrowIn");
+        snake.Play("Burrow");
         isBurrowed = true;
         // TODO: animate burrow
         Debug.Log("Burrowing...");

@@ -69,17 +69,27 @@ public class SnakeHandler : MonoBehaviour
 
     void Update()
     {
-        // Clean up destroyed snakes
-        _activeSnakes.RemoveAll(s => s == null);
+        // PROPERLY clean up destroyed snakes
+        int nullCount = _activeSnakes.RemoveAll(s => s == null);
+        if (nullCount > 0)
+        {
+            Debug.Log($"Cleaned up {nullCount} destroyed snakes. Active: {_activeSnakes.Count}/{maxAlive}");
+        }
 
         // Spawn timer
         _spawnTimer -= Time.deltaTime;
         if (_spawnTimer <= 0f)
         {
             _spawnTimer = spawnInterval;
+
+            // This should now work correctly since list is cleaned
             if (_activeSnakes.Count < maxAlive)
             {
                 SpawnNewSnake();
+            }
+            else
+            {
+                Debug.Log($"Max alive reached: {_activeSnakes.Count}/{maxAlive} - waiting for snakes to be destroyed");
             }
         }
     }
