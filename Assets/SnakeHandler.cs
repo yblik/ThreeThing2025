@@ -27,6 +27,13 @@ public class SnakeHandler : MonoBehaviour
     [Header("References")]
     public Transform player;
 
+    //type shit boy
+
+    [Header("Random Spawn Offset")]
+    public float randomRadius = 2f;
+    public float randomVerticalOffset = 0.2f;
+
+
     private List<GameObject> _activeSnakes = new List<GameObject>();
     private float _spawnTimer = 0f;
 
@@ -94,6 +101,14 @@ public class SnakeHandler : MonoBehaviour
         }
 
         Vector3 spawnPos = spawnPoint.position;
+
+        // 2d offset tpye shit
+        Vector2 offset = Random.insideUnitCircle * randomRadius;
+        spawnPos += new Vector3(offset.x, 0f, offset.y);
+
+        // vertical offset in case
+        spawnPos.y += randomVerticalOffset;
+
         Quaternion spawnRot = spawnPoint.rotation;
 
         // Snap to ground if needed
