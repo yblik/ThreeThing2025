@@ -28,34 +28,20 @@ public class PlayerCatch : MonoBehaviour
         if (Catching && canCatch && currentTarget != null)
         {
             // Confirm the target can actually be caught
-            AIControllerScript ai = currentTarget.GetComponent<AIControllerScript>();
-            if (ai != null && ai.currentState != AIControllerScript.AIState.Hiding)
-            {
                 Debug.Log("Caught a snake!");
                 Destroy(currentTarget.gameObject);
                 StoredCollectibles += 1;
                 canCatch = false;
                 currentTarget = null;
-            }
-            else
-            {
-                Debug.Log("Can't catch — the snake is hiding!");
-            }
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
         if (!other.CompareTag("Enemy")) return;
+        print("snake detected");
 
         // Make sure the snake isn't hiding
-        AIControllerScript ai = other.GetComponent<AIControllerScript>();
-        if (ai != null && ai.currentState == AIControllerScript.AIState.Hiding)
-        {
-            canCatch = false;
-            currentTarget = null;
-            return;
-        }
 
         // Normal catching logic
         if (StoredCollectibles < Max)

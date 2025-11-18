@@ -328,4 +328,41 @@ public class AIControllerScript : MonoBehaviour
         snake.Play("BurrowOut");
         isBurrowed = false;
     }
+
+    public void FreezeForCollection()
+    {
+        // Stop all coroutines first
+        StopAllCoroutines();
+
+        // Completely freeze NavMeshAgent
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            agent.updatePosition = false;
+            agent.updateRotation = false;
+        }
+
+        // Freeze current state - prevent any state transitions
+        currentState = AIState.Patrol; // Set to a neutral state
+
+        // Disable AI script components but keep this script enabled for collection logic
+        enabled = false; // This disables the Update() method
+
+        // Stop any attack or movement
+        isLunging = false;
+        snake.Play("trapped");
+
+        // Optional: Play a "frozen" or "stunned" animation instead of burrow
+        if (snake != null)
+        {
+            snake.Play("Idle"); // Or create a "Stunned" animation
+        }
+
+        // Make sure collider is enabled for collection
+        if (snakeCollider != null)
+            snakeCollider.enabled = true;
+
+        Debug.Log("Snake frozen for collection");
+    }
 }
