@@ -4,7 +4,9 @@ public class ShopItemBuyer : MonoBehaviour
 {
     public ShopItem item;            // Assign your ShopItem asset here
     public Bank bank;                // Reference to Bank script
-    public Transform spawnPoint;     // Where the item will appear
+    public Inventory inventory;     // Where the item will appear
+
+    public int type; //0 for storage, 1 for increasor, 2 for trap
 
     public void TryBuy()
     {
@@ -13,11 +15,20 @@ public class ShopItemBuyer : MonoBehaviour
             bank.Dinero -= item.cost;
             bank.SaveMoney();
 
-            // Spawn
-            if (item.itemPrefab != null)
+            switch (type)
             {
-                Instantiate(item.itemPrefab, spawnPoint.position + item.spawnOffset, Quaternion.identity);
+                case 0:
+                    inventory.storage++;
+                    break;
+                case 1:
+                    inventory.increasers++;
+                    break;
+                case 2:
+                    inventory.traps++; 
+                    break; 
+
             }
+            inventory.SaveInventory();
 
             // for inventory system, you might want to add the item to the player's inventory here
             //replace that instantiate line with inventory addition code here

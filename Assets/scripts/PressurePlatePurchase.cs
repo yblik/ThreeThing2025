@@ -3,7 +3,7 @@ using UnityEngine;
 public class PressurePlatePurchase : MonoBehaviour
 {
     public int cost = 50;
-    public GameObject itemToUnlock;
+    //public GameObject itemToUnlock;
     public bool destroyAfterPurchase = true;
     public bool oneTimePurchase = true;
 
@@ -11,12 +11,13 @@ public class PressurePlatePurchase : MonoBehaviour
     public float activationDelay = 0.2f;
 
     private bool hasPurchased = false;
+    public Bank b;
 
-    private void Start()
-    {
-        if (itemToUnlock != null)
-            itemToUnlock.SetActive(false);
-    }
+    //private void Start()
+    //{
+    //    if (itemToUnlock != null)
+    //        itemToUnlock.SetActive(false);
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
@@ -25,30 +26,29 @@ public class PressurePlatePurchase : MonoBehaviour
 
         Debug.Log("Player triggered purchase plate.");
 
-        Bank bank = other.GetComponentInParent<Bank>();
 
-        if (bank == null)
+        if (b == null)
         {
             Debug.LogError("Bank NOT found on player!", other);
             return;
         }
 
-        StartCoroutine(ProcessPurchase(bank));
+        StartCoroutine(ProcessPurchase());
     }
 
-    private System.Collections.IEnumerator ProcessPurchase(Bank bank)
+    private System.Collections.IEnumerator ProcessPurchase()
     {
         yield return new WaitForSeconds(activationDelay);
 
-        if (bank.Dinero >= cost)
+        if (b.Dinero >= cost)
         {
             Debug.Log("Purchase successful!");
 
-            bank.Dinero -= cost;
-            bank.SaveMoney();
+            b.Dinero -= cost;
+            b.SaveMoney();
 
-            if (itemToUnlock != null)
-                itemToUnlock.SetActive(true);
+            //if (itemToUnlock != null)
+            //    itemToUnlock.SetActive(true);
 
             hasPurchased = true;
 
