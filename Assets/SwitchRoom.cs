@@ -21,7 +21,7 @@ public class SwitchRoom : MonoBehaviour
         }
         if (roomNumber == 1)
         {
-            SceneManager.LoadScene("Scene01");
+            SceneManager.LoadScene("Scene01 1");
         }
         if (roomNumber == 2) //must be set - this is a bad system I should be shot
         {

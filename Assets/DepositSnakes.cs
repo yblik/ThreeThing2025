@@ -3,9 +3,9 @@ using UnityEngine;
 public class DepositSnakes : MonoBehaviour
 {
     //[Header("References")]
-    private Transform player;
-    private PlayerCatch PC;      // Reference to PlayerCatch script
-    private Bank Natwest;         // Reference to your money system
+    public Transform player;
+    public PlayerCatch PC;      // Reference to PlayerCatch script
+    public Bank Natwest;         // Reference to your money system
 
     [Header("Settings")]
     public float triggerDistance = 3f;

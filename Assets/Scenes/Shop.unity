@@ -3394,7 +3394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 703123272}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3910759, y: 0.0000056490135, z: -0.0000024003618, w: 0.9203584}
+  m_LocalRotation: {x: 0.41182202, y: 0.000007271155, z: -0.000003286008, w: 0.9112643}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4677,7 +4677,6 @@ GameObject:
   - component: {fileID: 1107766516}
   - component: {fileID: 1107766515}
   - component: {fileID: 1107766514}
-  - component: {fileID: 1107766513}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -4700,22 +4699,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1091766889}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1107766513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1107766511}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a93af97c786149d44b21f144fd817cbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: d9fe2e724d4bef24283aa53b61bc08d8, type: 2}
-  bank: {fileID: 475865761}
-  inventory: {fileID: 3622427094953670866}
-  type: 2
 --- !u!114 &1107766514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4755,6 +4738,8 @@ MonoBehaviour:
   oneTimePurchase: 0
   playerTag: Player
   activationDelay: 0.2
+  inventory: {fileID: 3622427094953670866}
+  Type: 2
   b: {fileID: 475865761}
 --- !u!65 &1107766516
 BoxCollider:
@@ -6425,7 +6410,6 @@ GameObject:
   - component: {fileID: 1708852830}
   - component: {fileID: 1708852829}
   - component: {fileID: 1708852828}
-  - component: {fileID: 1708852827}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -6448,22 +6432,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1091766889}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1708852827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1708852825}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a93af97c786149d44b21f144fd817cbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: d9fe2e724d4bef24283aa53b61bc08d8, type: 2}
-  bank: {fileID: 475865761}
-  inventory: {fileID: 3622427094953670866}
-  type: 1
 --- !u!114 &1708852828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6503,6 +6471,8 @@ MonoBehaviour:
   oneTimePurchase: 0
   playerTag: Player
   activationDelay: 0.2
+  inventory: {fileID: 3622427094953670866}
+  Type: 1
   b: {fileID: 475865761}
 --- !u!65 &1708852830
 BoxCollider:
@@ -6646,7 +6616,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1725038048}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3527946, y: 0.000005743182, z: -0.0000021653968, w: 0.93570083}
+  m_LocalRotation: {x: 0.37408754, y: 0.0000073998526, z: -0.0000029849173, w: 0.92739344}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7189,7 +7159,6 @@ GameObject:
   - component: {fileID: 1791349402}
   - component: {fileID: 1791349401}
   - component: {fileID: 1791349400}
-  - component: {fileID: 1791349405}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -7251,6 +7220,8 @@ MonoBehaviour:
   oneTimePurchase: 0
   playerTag: Player
   activationDelay: 0.2
+  inventory: {fileID: 3622427094953670866}
+  Type: 0
   b: {fileID: 475865761}
 --- !u!65 &1791349402
 BoxCollider:
@@ -7323,22 +7294,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1791349398}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1791349405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791349398}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a93af97c786149d44b21f144fd817cbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: fe7c1c34f59cbda4593f2228a7090983, type: 2}
-  bank: {fileID: 475865761}
-  inventory: {fileID: 3622427094953670866}
-  type: 0
 --- !u!1 &1803492850
 GameObject:
   m_ObjectHideFlags: 0
@@ -7981,7 +7936,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2009227538}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3067011, y: 0.0000058420333, z: -0.0000018824825, w: 0.9518059}
+  m_LocalRotation: {x: 0.43152958, y: 0.000009597362, z: -0.000004591011, w: 0.90209883}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

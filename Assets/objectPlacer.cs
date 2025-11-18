@@ -36,16 +36,24 @@ public class objectPlacer : MonoBehaviour
     {
         return inventory.storage > 0 || inventory.increasers > 0 || inventory.traps > 0;
     }
+
     void Update()
     {
         // Keyboard number key selection
         HandleKeyboardSelection();
 
-        // Toggle placement mode with Q (existing functionality)
+        // Toggle placement mode with Q - auto-selects first available item
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (!placing && HasAnyInventoryItems()) StartPlacementMode();
-            else CancelPlacement();
+            if (!placing && HasAnyInventoryItems())
+            {
+                AutoSelectFirstAvailableItem();
+                StartPlacementMode();
+            }
+            else
+            {
+                CancelPlacement();
+            }
         }
 
         if (placing)
@@ -57,7 +65,33 @@ public class objectPlacer : MonoBehaviour
     }
 
     // ---------------------------------------------------------------
-    // KEYBOARD NUMBER KEY SELECTION (NEW)
+    // AUTO-SELECT FIRST AVAILABLE ITEM (NEW)
+    // ---------------------------------------------------------------
+    void AutoSelectFirstAvailableItem()
+    {
+        // Priority order: Storage -> Increasers -> Traps
+        if (inventory.storage > 0)
+        {
+            currentItemType = 0;
+            currentPrefab = storagePrefab;
+            Debug.Log("Auto-selected: Storage");
+        }
+        else if (inventory.increasers > 0)
+        {
+            currentItemType = 1;
+            currentPrefab = increaserPrefab;
+            Debug.Log("Auto-selected: Increaser");
+        }
+        else if (inventory.traps > 0)
+        {
+            currentItemType = 2;
+            currentPrefab = trapPrefab;
+            Debug.Log("Auto-selected: Trap");
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // KEYBOARD NUMBER KEY SELECTION
     // ---------------------------------------------------------------
     void HandleKeyboardSelection()
     {
@@ -151,6 +185,7 @@ public class objectPlacer : MonoBehaviour
     {
         placing = false;
         currentItemType = -1;
+        currentPrefab = null;
         if (previewInstance != null)
             Destroy(previewInstance);
     }
