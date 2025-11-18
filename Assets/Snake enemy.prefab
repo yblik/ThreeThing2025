@@ -411,6 +411,7 @@ GameObject:
   - component: {fileID: 5341136049539995280}
   - component: {fileID: 7030082760433344119}
   - component: {fileID: 7299762034628269062}
+  - component: {fileID: 6693868393759124097}
   m_Layer: 0
   m_Name: Snake enemy
   m_TagString: Enemy
@@ -522,7 +523,7 @@ MonoBehaviour:
   player: {fileID: 0}
   SA: {fileID: 7299762034628269062}
   currentState: 0
-  detectionRange: 50
+  detectionRange: 100
   attackRange: 3
   stoppingDistance: 2
   chaseSpeed: 3.5
@@ -644,6 +645,22 @@ MonoBehaviour:
   rayRadius: 0.25
   head: {fileID: 3711681856969830262}
   player: {fileID: 0}
+--- !u!208 &6693868393759124097
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2739892544191724324}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 1, y: 0.5, z: 1}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &2815295570619056122
 GameObject:
   m_ObjectHideFlags: 0

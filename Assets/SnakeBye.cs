@@ -10,7 +10,7 @@ public class SnakeBye : MonoBehaviour
 
     public void bye()
     {
-        snake.SetActive(false);
+        Destroy(snake);
     }
     public void Dust()
     {
