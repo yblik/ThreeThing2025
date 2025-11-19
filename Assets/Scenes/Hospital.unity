@@ -1625,6 +1625,7 @@ MonoBehaviour:
   speak: {fileID: 476941623}
   patchedUp: {fileID: 203761223}
   talking: {fileID: 808357568}
+  dialogueDuration: 2
 --- !u!95 &476941623
 Animator:
   serializedVersion: 5
