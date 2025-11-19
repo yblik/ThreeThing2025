@@ -12,6 +12,9 @@ public class DepositSnakes : MonoBehaviour
     public int depositedSnakes = 0;
     public int maxDeposits = 20;
 
+    public AudioSource DepositSFX;
+    public AudioSource cantSFX;
+
     public void DSconstructor(Transform p, PlayerCatch pc, Bank natwest)
     {
         player = p;
@@ -29,17 +32,18 @@ public class DepositSnakes : MonoBehaviour
         float distance = Vector3.Distance(player.position, transform.position);
 
         // Only allow deposit if player is close and under limit
-        if (distance <= triggerDistance && depositedSnakes < maxDeposits)
+        if (distance <= triggerDistance)
         {
             // Visual or sound cue could go here ("Press E to deposit snakes")
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) && depositedSnakes < maxDeposits)
             {
                 if (PC.StoredCollectibles > 0)
                 {
                     Debug.Log($"Deposited {PC.StoredCollectibles} snake(s)!");
 
                     depositedSnakes += PC.StoredCollectibles;
+                    DepositSFX.Play();
 
                     // Call your bank to add the earnings
                     Natwest.WorkdaysWorking(PC.StoredCollectibles);
@@ -49,7 +53,7 @@ public class DepositSnakes : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("No snakes to deposit!");
+                    cantSFX.Play();
                 }
             }
         }
