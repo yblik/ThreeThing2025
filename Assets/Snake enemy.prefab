@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 398020460183645527}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.304, z: -0.541}
-  m_LocalScale: {x: 0.83206, y: 0.83206, z: 0.83206}
+  m_LocalPosition: {x: 0, y: -0.304, z: -0.332}
+  m_LocalScale: {x: 0.4055044, y: 0.4055044, z: 0.4055044}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3711681856969830262}
@@ -548,7 +548,7 @@ MonoBehaviour:
   attackCooldown: 1.2
   lungeDuration: 0.25
   attackSpeedMultiplier: 6
-  turnSpeed: 8
+  turnSpeed: 2
   minMoveToRotate: 0.05
   isBurrowed: 0
 --- !u!195 &7976701513709187039
@@ -625,6 +625,11 @@ MonoBehaviour:
   attackRange: 1.4
   attackCooldown: 1.2
   damage: 1
+  attackFOV: 45
+  requireDirectLineOfSight: 1
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   rayRadius: 0.25
   head: {fileID: 3711681856969830262}
   player: {fileID: 0}
@@ -696,7 +701,7 @@ Transform:
   m_GameObject: {fileID: 2815295570619056122}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.214, y: 0, z: 1.382}
+  m_LocalPosition: {x: 0.214, y: 0, z: 0.955}
   m_LocalScale: {x: 0.47851, y: 0.47851, z: 1.0144411}
   m_ConstrainProportionsScale: 0
   m_Children:

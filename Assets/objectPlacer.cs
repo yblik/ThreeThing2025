@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class objectPlacer : MonoBehaviour
@@ -32,6 +33,8 @@ public class objectPlacer : MonoBehaviour
     // Track which item type we're placing (0=storage, 1=increaser, 2=trap)
     private int currentItemType = -1;
     private GameObject currentPrefab;
+
+    public AudioSource cant;
 
     bool HasAnyInventoryItems()
     {
@@ -109,6 +112,7 @@ public class objectPlacer : MonoBehaviour
             else
             {
                 Debug.Log("No storage items available!");
+                cant.Play();
                 if (placing) CancelPlacement();
             }
         }
@@ -126,6 +130,7 @@ public class objectPlacer : MonoBehaviour
             else
             {
                 Debug.Log("No increaser items available!");
+                cant.Play();
                 if (placing) CancelPlacement();
             }
         }
@@ -143,6 +148,7 @@ public class objectPlacer : MonoBehaviour
             else
             {
                 Debug.Log("No trap items available!");
+                cant.Play();
                 if (placing) CancelPlacement();
             }
         }

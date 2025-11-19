@@ -14,6 +14,8 @@ public class PlayerCatch : MonoBehaviour
     public Image CapacityBar;
 
     public bool bootlegVstart = false;
+    public AudioSource caughtSFX;
+    public AudioSource cant;
 
     private void Update()
     {
@@ -31,6 +33,7 @@ public class PlayerCatch : MonoBehaviour
                 Debug.Log("Caught a snake!");
                 Destroy(currentTarget.gameObject);
                 StoredCollectibles += 1;
+                caughtSFX.Play();
                 canCatch = false;
                 currentTarget = null;
         }
@@ -51,6 +54,7 @@ public class PlayerCatch : MonoBehaviour
         }
         else
         {
+            cant.Play();
             canCatch = false;
             currentTarget = null;
         }

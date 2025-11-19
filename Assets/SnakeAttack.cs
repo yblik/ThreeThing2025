@@ -7,12 +7,17 @@ public class SnakeAttack : MonoBehaviour
     public float attackCooldown = 1.2f;    // cooldown between bites
     public float damage = 1f;              // damage dealt to player
 
+    [Header("Field of View Attack")]
+    public float attackFOV = 45f;          // Only attack if player within 45° in front
+    public bool requireDirectLineOfSight = true;
+    public LayerMask obstructionMask = ~0;
+
     [Header("Raycast Options")]
     public float rayRadius = 0.25f;        // hit forgiveness, small spherecast
 
     [Header("References")]
     public Transform head;                 // snake head/mouth position
-    public Transform player;               // PLAYER transform (no LayerMask now)
+    public Transform player;               // PLAYER transform
 
     [Header("Audio")]
     public AudioClip ouchhitClip;
@@ -49,7 +54,15 @@ public class SnakeAttack : MonoBehaviour
         if (player == null || playerHealth == null || head == null)
             return;
 
-        // Distance check first
+        // FOV CHECK - Only attack if player is in front
+        if (!IsPlayerInAttackFOV())
+            return;
+
+        // Line of sight check (optional)
+        if (requireDirectLineOfSight && !HasLineOfSightToPlayer())
+            return;
+
+        // Distance check
         float dist = Vector3.Distance(head.position, player.position);
         if (dist > attackRange)
             return;
@@ -77,6 +90,46 @@ public class SnakeAttack : MonoBehaviour
         }
     }
 
+    // FOV CHECK METHOD
+    bool IsPlayerInAttackFOV()
+    {
+        if (player == null) return false;
+
+        Vector3 toPlayer = player.position - transform.position;
+        toPlayer.y = 0; // Ignore height differences
+
+        float angle = Vector3.Angle(transform.forward, toPlayer);
+        return angle <= attackFOV;
+    }
+
+    // LINE OF SIGHT CHECK METHOD
+    bool HasLineOfSightToPlayer()
+    {
+        if (player == null || head == null) return false;
+
+        Vector3 eyePosition = head.position;
+        Vector3 playerCenter = player.position + Vector3.up * 0.5f; // Player center
+
+        if (Physics.Linecast(eyePosition, playerCenter, out RaycastHit hit, obstructionMask))
+        {
+            return hit.transform == player || hit.transform.IsChildOf(player);
+        }
+
+        return true;
+    }
+
+    // CALL THIS FROM AIControllerScript TO CHECK IF SHOULD ATTACK
+    public bool ShouldAttack()
+    {
+        if (player == null || head == null) return false;
+
+        // Check all conditions: FOV, line of sight, distance, cooldown
+        return IsPlayerInAttackFOV() &&
+               (!requireDirectLineOfSight || HasLineOfSightToPlayer()) &&
+               Vector3.Distance(head.position, player.position) <= attackRange &&
+               attackTimer >= attackCooldown;
+    }
+
     private void PlaySound(AudioClip clip)
     {
         if (clip == null) return;
@@ -90,5 +143,30 @@ public class SnakeAttack : MonoBehaviour
         source.Play();
 
         Destroy(audioObj, clip.length);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (player == null || head == null) return;
+
+        // Draw attack range
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(head.position, attackRange);
+
+        // Draw FOV cone from snake body (not head)
+        Gizmos.color = IsPlayerInAttackFOV() ? Color.red : Color.yellow;
+        Vector3 leftBound = Quaternion.Euler(0, -attackFOV, 0) * transform.forward * attackRange;
+        Vector3 rightBound = Quaternion.Euler(0, attackFOV, 0) * transform.forward * attackRange;
+
+        Gizmos.DrawRay(transform.position, transform.forward * attackRange);
+        Gizmos.DrawRay(transform.position, leftBound);
+        Gizmos.DrawRay(transform.position, rightBound);
+
+        // Draw line of sight from head to player
+        if (requireDirectLineOfSight)
+        {
+            Gizmos.color = HasLineOfSightToPlayer() ? Color.green : Color.magenta;
+            Gizmos.DrawLine(head.position, player.position + Vector3.up * 0.5f);
+        }
     }
 }
