@@ -10,13 +10,8 @@ public class SpawnManager : MonoBehaviour
     public int spawnIndex = 0;
     public int posIndex = 0;
     public bool spawn;
-
-    [Header("Snake Spawning")]
-    public GameObject snakePrefab;            // Assign in inspector
-    public Transform snakeSpawnerPoint;       // Assign spawner in scene
-    public int numberOfSnakesToSpawn = 3;
-    public float spawnRadius = 3f;            // random displacement radius
-    public float heightOffset = 0.3f;         // small Y offset
+       // small Y offset
+       public AudioSource Rt;
 
     private void Awake()
     {
@@ -27,6 +22,7 @@ public class SpawnManager : MonoBehaviour
         }
 
         Instance = this;
+        Rt.Stop();
         DontDestroyOnLoad(gameObject);
         SetPoint(1);
     }
