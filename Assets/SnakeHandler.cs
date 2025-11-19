@@ -36,6 +36,16 @@ public class SnakeHandler : MonoBehaviour
     private List<GameObject> _activeSnakes = new List<GameObject>();
     private float _spawnTimer = 0f;
 
+    // ===== NEW DIFFICULTY SETTINGS =====
+    [Header("Difficulty Scaling")]
+    public GameObject[] snakeVariants;          // Assign different snake prefabs here
+    public int maxSnakesPerSpawn = 3;           // Max snakes spawned each interval
+    public float difficultyScale = 1f;          // External control: 0=easy, 1=hard
+
+    public void IncreasorEffect()
+    {
+        difficultyScale += 0.2f;
+    }
     void Start()
     {
         // Validation
@@ -69,30 +79,74 @@ public class SnakeHandler : MonoBehaviour
 
     void Update()
     {
-        // PROPERLY clean up destroyed snakes
+        // PROPERLY clean up destroyed snakes (YOUR EXISTING CODE)
         int nullCount = _activeSnakes.RemoveAll(s => s == null);
         if (nullCount > 0)
         {
             Debug.Log($"Cleaned up {nullCount} destroyed snakes. Active: {_activeSnakes.Count}/{maxAlive}");
         }
 
-        // Spawn timer
+        // Spawn timer (YOUR EXISTING CODE)
         _spawnTimer -= Time.deltaTime;
         if (_spawnTimer <= 0f)
         {
             _spawnTimer = spawnInterval;
 
-            // This should now work correctly since list is cleaned
-            if (_activeSnakes.Count < maxAlive)
+            // ===== MODIFIED SPAWN LOGIC =====
+            int snakesToSpawn = GetSnakesToSpawn();
+            int spawnedCount = 0;
+
+            for (int i = 0; i < snakesToSpawn; i++)
             {
-                SpawnNewSnake();
+                if (_activeSnakes.Count < maxAlive)
+                {
+                    if (SpawnNewSnakeWithVariant())
+                        spawnedCount++;
+                }
             }
-            else
+
+            if (spawnedCount > 0)
             {
-                Debug.Log($"Max alive reached: {_activeSnakes.Count}/{maxAlive} - waiting for snakes to be destroyed");
+                Debug.Log($"Spawned {spawnedCount} snakes (Difficulty: {difficultyScale:F2})");
             }
         }
     }
+    // ===== NEW METHOD: Calculate how many snakes to spawn =====
+    private int GetSnakesToSpawn()
+    {
+        // When difficultyScale is 0 -> spawn 1, when 1 -> spawn maxSnakesPerSpawn
+        int count = Mathf.RoundToInt(1 + (difficultyScale * (maxSnakesPerSpawn - 1)));
+        return Mathf.Clamp(count, 1, maxSnakesPerSpawn);
+    }
+
+    // ===== NEW METHOD: Get random snake variant based on difficulty =====
+    private GameObject GetSnakeVariant()
+    {
+        // If no variants or easy difficulty, use original prefab
+        if (snakeVariants == null || snakeVariants.Length == 0 || difficultyScale < 0.3f)
+            return snakePrefab;
+
+        // Higher difficulty = more likely to spawn variants
+        float variantChance = difficultyScale;
+        if (Random.value > variantChance)
+            return snakePrefab;
+
+        // Pick random variant
+        return snakeVariants[Random.Range(0, snakeVariants.Length)];
+    }
+
+    // ===== NEW METHOD: Spawn with variant support =====
+    private bool SpawnNewSnakeWithVariant()
+    {
+        GameObject originalPrefab = snakePrefab;
+        snakePrefab = GetSnakeVariant(); // Temporary swap
+
+        bool success = SpawnNewSnake(); // Call your EXISTING method
+
+        snakePrefab = originalPrefab; // Restore original
+        return success;
+    }
+    // Add these methods to your existing class:
 
     private bool SpawnNewSnake()
     {

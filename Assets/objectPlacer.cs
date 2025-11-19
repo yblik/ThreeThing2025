@@ -7,7 +7,7 @@ public class objectPlacer : MonoBehaviour
     public Transform footPos;              // height reference
     public LayerMask surfaceMask;
     public float storerOffset = 0.2f;
-    public SnakeHandler snakeHandler;
+    public SnakeHandler snakeHanler;
 
     [Header("Placement Settings")]
     public float rotationSpeed = 90f;
@@ -292,14 +292,7 @@ public class objectPlacer : MonoBehaviour
         );
         if (currentItemType == 1)
         {
-            if (snakeHandler.spawnInterval > 0)
-            {
-                snakeHandler.spawnInterval -= 0.5f;
-            }
-            else
-            {
-                print("tooo many - i aint adding this feature that people may see, I want to add black jack");
-            }
+            snakeHanler.IncreasorEffect();
         }
 
         // Reduce inventory count
