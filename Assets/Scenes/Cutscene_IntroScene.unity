@@ -24323,7 +24323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   delayInSeconds: 30
-  nextSceneName: Scene01 1
+  nextSceneName: Tent
 --- !u!4 &411870134
 Transform:
   m_ObjectHideFlags: 0
