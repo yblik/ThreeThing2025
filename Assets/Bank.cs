@@ -28,4 +28,23 @@ public class Bank : MonoBehaviour
     {
         PlayerPrefs.SetInt("Money", Dinero);
     }
+    //for black jack: 
+    public void AddMoney(int amount)
+    {
+        Dinero += amount;
+        PlayerPrefs.SetInt("Money", Dinero);
+    }
+
+    public void RemoveMoney(int amount)
+    {
+        Dinero -= amount;
+        if (Dinero < 0) Dinero = 0; // prevent negatives
+
+        PlayerPrefs.SetInt("Money", Dinero);
+    }
+
+    public int GetMoney()
+    {
+        return Dinero;
+    }
 }
