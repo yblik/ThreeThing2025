@@ -10,8 +10,9 @@ public class randomiseSpeech : MonoBehaviour
     public GameObject two;
     public GameObject three;
 
-    private void Awake()
+    private void OnEnable()
     {
+        Clear();
         randomNumber = Random.Range(1, 4);
         if (randomNumber == 1)
         {
@@ -25,5 +26,11 @@ public class randomiseSpeech : MonoBehaviour
         {
             three.SetActive(true);
         }
+    }
+    public void Clear()
+    {
+        one.SetActive(false);
+        two.SetActive(false);
+        three.SetActive(false);
     }
 }
